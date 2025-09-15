@@ -1,10 +1,7 @@
-
-
 const getHomepage = async (req, res) => {
-    return res.render('sample.ejs')
-}
+  return res.render("sample.ejs");
+};
 
 module.exports = {
-    getHomepage,
-
-}
+  getHomepage,
+};
