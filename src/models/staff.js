@@ -9,27 +9,27 @@ const staffSchema = new mongoose.Schema(
       enum: ["admin", "manager", "staff", "candidate"],
       default: "staff",
     },
-    personal_info: {
-      full_name: String,
+    personalInfo: {
+      fullName: String,
       email: String,
       phone: String,
       address: String,
-      citizen_id: String,
+      citizenId: String,
       dob: Date,
       gender: {
         type: String,
         enum: ["male", "female", "other"],
       },
     },
-    employment_info: {
+    employmentInfo: {
       position: String,
-      contract_id: mongoose.Schema.Types.ObjectId,
+      contractId: mongoose.Schema.Types.ObjectId,
       salary: Number,
       allowance: Number,
       penalties: Number,
     },
-    candidate_info: {
-      cv_url: String,
+    candidateInfo: {
+      cvUrl: String,
       status: {
         type: String,
         enum: ["pending", "approved", "rejected", null],
@@ -39,7 +39,7 @@ const staffSchema = new mongoose.Schema(
   {
     timestamps: true,
     collection: "tblstaff",
-  },
+  }
 );
 
 module.exports = mongoose.model("Staff", staffSchema);
