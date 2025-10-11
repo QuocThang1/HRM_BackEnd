@@ -16,7 +16,7 @@ const createStaffService = async (
 ) => {
   try {
     // Check if the staff already exists
-    const existingStaff = await Staff.findOne({ "personal_info.email": email });
+    const existingStaff = await Staff.findOne({ "personalInfo.email": email });
     if (existingStaff) {
       return { EC: 1, EM: "Email already exists" };
     }
@@ -29,8 +29,8 @@ const createStaffService = async (
       username: email, // username = email
       password: hashedPassword,
       role: "staff", // default role
-      personal_info: {
-        full_name: name,
+      personalInfo: {
+        fullName: name,
         email,
         phone: phone || "",
         address: address || "",
@@ -53,27 +53,16 @@ const createStaffService = async (
   }
 };
 
-// UPDATE PROFILE SERVICE
-const updateProfileService = async (
-  staffId,
-  name,
-  email,
-  address,
-  phone,
-  gender,
-) => {
+const updateProfileService = async (staffId, name, email, address, phone) => {
   try {
-    const updatedStaff = await Staff.findByIdAndUpdate(
-      staffId,
-      {
-        "personal_info.full_name": name,
-        "personal_info.email": email,
-        "personal_info.address": address,
-        "personal_info.phone": phone,
-        "personal_info.gender": gender,
-      },
-      { new: true, runValidators: true }, // đảm bảo validate theo schema
-    ).select("-password");
+    const updateData = {
+      "personalInfo.fullName": name,
+      "personalInfo.email": email,
+      "personalInfo.address": address,
+      "personalInfo.phone": phone,
+    };
+
+    const updatedStaff = await staffDAO.updateProfile(staffId, updateData);
 
     if (!updatedStaff) {
       return { EC: 1, EM: "Staff not found" };
@@ -81,25 +70,24 @@ const updateProfileService = async (
 
     return { EC: 0, EM: "Profile updated successfully", staff: updatedStaff };
   } catch (error) {
-    console.error("Error updating profile:", error);
+    console.error("Error in Service updateProfileService:", error);
     return { EC: 2, EM: "Error updating profile" };
   }
 };
-
 // LOGIN SERVICE
 const handleLoginService = async (email, password) => {
   try {
-    const staff = await Staff.findOne({ "personal_info.email": email });
+    const staff = await Staff.findOne({ "personalInfo.email": email });
     if (!staff) return { EC: 1, EM: "Email or Password is not correct" };
 
     const isMatch = await bcrypt.compare(password, staff.password);
     if (!isMatch) return { EC: 2, EM: "Email or Password is not correct" };
 
     const payload = {
-      email: staff.personal_info.email,
-      name: staff.personal_info.full_name,
-      address: staff.personal_info.address,
-      phone: staff.personal_info.phone,
+      email: staff.personalInfo.email,
+      name: staff.personalInfo.fullName,
+      address: staff.personalInfo.address,
+      phone: staff.personalInfo.phone,
       id: staff._id,
     };
 
@@ -111,10 +99,10 @@ const handleLoginService = async (email, password) => {
       EC: 0,
       access_token,
       staff: {
-        email: staff.personal_info.email,
-        name: staff.personal_info.full_name,
-        address: staff.personal_info.address,
-        phone: staff.personal_info.phone,
+        email: staff.personalInfo.email,
+        name: staff.personalInfo.fullName,
+        address: staff.personalInfo.address,
+        phone: staff.personalInfo.phone,
       },
     };
   } catch (error) {
@@ -127,15 +115,15 @@ const handleLoginService = async (email, password) => {
 const getStaffService = async () => {
   try {
     const staffs = await Staff.find({})
-      .select("username role personal_info.full_name personal_info.email")
+      .select("username role personalInfo.fullName personalInfo.email")
       .lean();
 
     const result = staffs.map((s) => ({
       _id: s._id,
       username: s.username,
       role: s.role,
-      full_name: s.personal_info?.full_name || "",
-      email: s.personal_info?.email || "",
+      fullName: s.personalInfo?.fullName || "",
+      email: s.personalInfo?.email || "",
     }));
 
     return result;
@@ -156,10 +144,43 @@ const getAccountService = async (staffId) => {
   }
 };
 
+const addNewEmployeeService = async ({ username, password, fullName, email, phone, address }) => {
+  try {
+    // Check trùng email
+    const existing = await staffDAO.findByEmail(email);
+    if (existing) {
+      throw new Error("Email already exists");
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Chuẩn bị data
+    const staffData = {
+      username,
+      password: hashedPassword,
+      personalInfo: {
+        fullName,
+        email,
+        phone,
+        address,
+      },
+    };
+
+    // Tạo mới staff
+    const newStaff = await staffDAO.createStaff(staffData);
+    return newStaff;
+  } catch (error) {
+    console.error("Error in addNewEmployeeService:", error);
+    throw error;
+  }
+};
+
 module.exports = {
   createStaffService,
   handleLoginService,
   getStaffService,
   updateProfileService,
   getAccountService,
+  addNewEmployeeService,
 };
