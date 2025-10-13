@@ -1,10 +1,13 @@
 const express = require("express");
-const { createStaff, addNewEmployee } = require("../controllers/staffController");
-const { handleLogin } = require("../controllers/staffController");
-const { getStaff } = require("../controllers/staffController");
-const { getAccount } = require("../controllers/staffController");
-const { updateProfile } = require("../controllers/staffController");
-const { detailEmployee, updateEmloyee, deleteEmployee } = require("../controllers/adminController");
+const { getStaff,
+  addNewStaff,
+  getOneStaff,
+  updateStaff,
+  deleteStaff, } = require("../controllers/staffController");
+const { handleSignUp,
+  handleLogin,
+  getAccount,
+  updateProfile, } = require("../controllers/accountController");
 const { createDepartment,
   getDepartments,
   getDepartment,
@@ -21,15 +24,15 @@ routerAPI.get("/", (req, res) => {
 });
 
 //staff routes
-routerAPI.post("/register", createStaff);
+routerAPI.post("/register", handleSignUp);
 routerAPI.post("/login", handleLogin); // Assuming you have a handleLogin function
 routerAPI.get("/staff", getStaff); // Example route for getting staff data
 routerAPI.get("/account", getAccount); // Example route for getting account data
 routerAPI.put("/profile", updateProfile); // Example route for updating profile
-routerAPI.post("/add-employee", addNewEmployee); // New route for adding an employee
-routerAPI.delete("/:id", deleteEmployee);
-routerAPI.put("/:id", updateEmloyee);
-routerAPI.get("/detail-employee/:id", detailEmployee);
+routerAPI.post("/add-employee", addNewStaff); // New route for adding an employee
+routerAPI.delete("/:id", deleteStaff);
+routerAPI.put("/:id", updateStaff);
+routerAPI.get("/detail-employee/:id", getOneStaff);
 
 //department routes
 routerAPI.post("/departments", createDepartment);
