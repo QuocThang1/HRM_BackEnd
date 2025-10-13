@@ -1,4 +1,5 @@
 require("dotenv").config();
+const { Router } = require("express");
 const jwt = require("jsonwebtoken");
 
 const auth = (req, res, next) => {
@@ -20,6 +21,7 @@ const auth = (req, res, next) => {
         address: decoded.address,
         phone: decoded.phone,
         _id: decoded.id,
+        role: decoded.role,
       };
       next(); // Proceed to the next middleware or route handler
     } catch (error) {
