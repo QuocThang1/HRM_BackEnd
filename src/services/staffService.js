@@ -89,6 +89,7 @@ const handleLoginService = async (email, password) => {
       address: staff.personalInfo.address,
       phone: staff.personalInfo.phone,
       id: staff._id,
+      role: staff.role,
     };
 
     const access_token = jwt.sign(payload, process.env.JWT_SECRET, {
@@ -103,6 +104,7 @@ const handleLoginService = async (email, password) => {
         name: staff.personalInfo.fullName,
         address: staff.personalInfo.address,
         phone: staff.personalInfo.phone,
+        role: staff.role,
       },
     };
   } catch (error) {
