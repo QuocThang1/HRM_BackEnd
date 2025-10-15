@@ -3,7 +3,10 @@ const { getStaff,
   addNewStaff,
   getOneStaff,
   updateStaff,
-  deleteStaff, } = require("../controllers/staffController");
+  deleteStaff,
+  getStaffByDepartment,
+  assignStaffToDepartment,
+  getStaffNotInDepartment } = require("../controllers/staffController");
 const { handleSignUp,
   handleLogin,
   getAccount,
@@ -33,6 +36,10 @@ routerAPI.post("/add-employee", addNewStaff); // New route for adding an employe
 routerAPI.delete("/:id", deleteStaff);
 routerAPI.put("/:id", updateStaff);
 routerAPI.get("/detail-employee/:id", getOneStaff);
+routerAPI.get("/staff/departments/:departmentId/", getStaffByDepartment);
+routerAPI.put("/staff/assign-department", assignStaffToDepartment);
+routerAPI.get("/staff/not-in-department/:departmentId", getStaffNotInDepartment);
+
 
 //department routes
 routerAPI.post("/departments", createDepartment);

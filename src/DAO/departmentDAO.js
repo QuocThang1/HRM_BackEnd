@@ -1,4 +1,5 @@
 const Department = require("../models/department");
+const Staff = require("../models/staff");
 
 const createDepartment = async (data) => {
     try {
@@ -38,9 +39,29 @@ const updateDepartment = async (id, data) => {
 };
 
 const deleteDepartment = async (id) => {
+    const session = await Department.startSession();
+    session.startTransaction();
     try {
-        return await Department.findByIdAndDelete(id);
+        // Xóa department
+        const deletedDepartment = await Department.findByIdAndDelete(id, { session });
+        if (!deletedDepartment) {
+            await session.abortTransaction();
+            session.endSession();
+            return null;
+        }
+        // Xóa departmentId trong staff liên quan
+        await Staff.updateMany(
+            { departmentId: id },
+            { $unset: { departmentId: "" } },
+            { session }
+        );
+
+        await session.commitTransaction();
+        session.endSession();
+        return deletedDepartment;
     } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
         console.error("Error deleting department:", error);
         throw error;
     }
