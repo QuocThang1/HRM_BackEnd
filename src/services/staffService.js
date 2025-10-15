@@ -101,10 +101,25 @@ const deleteStaffService = async (staffId) => {
   }
 };
 
+const getStaffByDepartmentService = async (departmentId) => {
+  return await staffDAO.getStaffByDepartmentId(departmentId);
+};
+
+const assignStaffToDepartmentService = async (staffId, departmentId) => {
+  return await staffDAO.assignStaffToDepartment(staffId, departmentId);
+};
+
+const getStaffNotInDepartmentService = async (departmentId) => {
+  return await staffDAO.getStaffNotInDepartment(departmentId);
+};
+
 module.exports = {
   getStaffService,
   addNewStaffService,
   getOneStaffService,
   updateStaffService,
   deleteStaffService,
+  getStaffByDepartmentService,
+  assignStaffToDepartmentService,
+  getStaffNotInDepartmentService
 };

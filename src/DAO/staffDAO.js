@@ -1,4 +1,5 @@
 const Staff = require("../models/staff");
+const Department = require("../models/department");
 
 class StaffDAO {
   async getStaffByID(staffId) {
@@ -14,7 +15,14 @@ class StaffDAO {
   async deleteStaffByID(staffId) {
     try {
       const deletedStaff = await Staff.findByIdAndDelete(staffId);
-      return deletedStaff; // trả về document đã xóa hoặc null nếu không tìm thấy
+      if (deletedStaff) {
+        await Department.updateMany(
+          { managerId: staffId },
+          { $unset: { managerId: "" } }
+        );
+      }
+
+      return deletedStaff;
     } catch (error) {
       console.error("Error deleting staff by ID:", error);
       throw error;
@@ -69,6 +77,47 @@ class StaffDAO {
       throw error;
     }
   }
+
+  async getStaffByDepartmentId(departmentId) {
+    try {
+      // Lọc nhân viên theo departmentId, không cần dùng 'new'
+      return await Staff.find({ departmentId: departmentId }).select(
+        "personalInfo role _id"
+      );
+    } catch (error) {
+      console.error("Error fetching staff by department:", error);
+      throw error;
+    }
+  }
+
+  async assignStaffToDepartment(staffId, departmentId) {
+    try {
+      return await Staff.findByIdAndUpdate(
+        staffId,
+        { departmentId: departmentId },
+        { new: true }
+      ).select("-password");
+    } catch (error) {
+      console.error("Error assigning staff to department:", error);
+      throw error;
+    }
+  }
+
+  async getStaffNotInDepartment(departmentId) {
+    try {
+      return await Staff.find({
+        $or: [
+          { departmentId: { $exists: false } },
+          { departmentId: null },
+        ]
+      }).select("personalInfo role _id");
+    } catch (error) {
+      console.error("Error fetching staff not in department:", error);
+      throw error;
+    }
+  }
+
+
 }
 
 module.exports = new StaffDAO();

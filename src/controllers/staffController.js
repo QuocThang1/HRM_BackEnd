@@ -1,8 +1,12 @@
+const { get } = require("mongoose");
 const { getStaffService,
   addNewStaffService,
   getOneStaffService,
   deleteStaffService,
-  updateStaffService } = require("../services/staffService");
+  updateStaffService,
+  getStaffByDepartmentService,
+  assignStaffToDepartmentService,
+  getStaffNotInDepartmentService } = require("../services/staffService");
 
 const getStaff = async (req, res) => {
   const data = await getStaffService();
@@ -79,6 +83,63 @@ const deleteStaff = async (req, res) => {
   }
 };
 
+const getStaffByDepartment = async (req, res) => {
+  try {
+    const { departmentId } = req.params;
+    console.log("Department ID:", departmentId);
+    const staffList = await getStaffByDepartmentService(departmentId);
+    return res.status(200).json({
+      EC: 0,
+      EM: "Fetch staff by department successfully",
+      data: staffList,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      EC: 1,
+      EM: "Error fetching staff by department",
+    });
+  }
+};
+
+const assignStaffToDepartment = async (req, res) => {
+  try {
+    const { staffId, departmentId } = req.body;
+
+    if (!staffId || !departmentId) {
+      return res.status(400).json({ EC: 1, EM: "staffId và departmentId là bắt buộc" });
+    }
+
+    const updatedStaff = await assignStaffToDepartmentService(staffId, departmentId);
+    return res.status(200).json({
+      EC: 0,
+      EM: "Staff assigned to department successfully",
+      data: updatedStaff,
+    });
+  } catch (error) {
+    console.error("Error in assignStaffToDepartment:", error);
+    return res.status(500).json({ EC: 1, EM: "Error assigning staff to department" });
+  }
+};
+
+
+const getStaffNotInDepartment = async (req, res) => {
+  try {
+    const { departmentId } = req.params;
+    const staffList = await getStaffNotInDepartmentService(departmentId);
+    return res.status(200).json({
+      EC: 0,
+      EM: "Fetch staff not in department successfully",
+      data: staffList,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      EC: 1,
+      EM: "Error fetching staff not in department",
+    });
+  }
+};
 
 module.exports = {
   getStaff,
@@ -86,4 +147,7 @@ module.exports = {
   getOneStaff,
   updateStaff,
   deleteStaff,
+  getStaffByDepartment,
+  assignStaffToDepartment,
+  getStaffNotInDepartment
 };
