@@ -2,14 +2,43 @@ const Department = require("../models/department");
 const Staff = require("../models/staff");
 
 const createDepartment = async (data) => {
+    const session = await Department.startSession();
+    session.startTransaction();
     try {
         const department = new Department(data);
-        return await department.save();
+        const savedDepartment = await department.save({ session });
+
+        await Staff.findByIdAndUpdate(
+            data.managerId,
+            { departmentId: savedDepartment._id },
+            { session }
+        );
+
+        await session.commitTransaction();
+        session.endSession();
+        return savedDepartment;
     } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
         console.error("Error creating department:", error);
         throw error;
     }
 };
+
+const getAvailableManagers = async () => {
+    try {
+        return await Staff.find({
+            role: "manager",
+            $or: [
+                { departmentId: { $exists: false } },
+                { departmentId: null }
+            ]
+        }).select("-password");
+    } catch (error) {
+        console.error("Error fetching available managers:", error);
+        throw error;
+    }
+}
 
 const getAllDepartments = async () => {
     try {
@@ -73,4 +102,5 @@ module.exports = {
     getDepartmentById,
     updateDepartment,
     deleteDepartment,
+    getAvailableManagers,
 };

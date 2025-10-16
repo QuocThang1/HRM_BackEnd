@@ -1,4 +1,4 @@
-const { createDepartmentService, getDepartmentService, getDepartmentsService, updateDepartmentService, deleteDepartmentService } = require("../services/departmentService");
+const { createDepartmentService, getDepartmentService, getDepartmentsService, updateDepartmentService, deleteDepartmentService, getAvailableManagersService } = require("../services/departmentService");
 
 const createDepartment = async (req, res) => {
     try {
@@ -55,10 +55,21 @@ const deleteDepartment = async (req, res) => {
     }
 };
 
+const getAvailableManagers = async (req, res) => {
+    try {
+        const managers = await getAvailableManagersService();
+        return res.status(200).json({ EC: 0, EM: "Success", data: managers });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ EC: 1, EM: "Error fetching available managers" });
+    }
+};
+
 module.exports = {
     createDepartment,
     getDepartments,
     getDepartment,
     updateDepartment,
     deleteDepartment,
+    getAvailableManagers
 };

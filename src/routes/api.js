@@ -6,7 +6,8 @@ const { getStaff,
   deleteStaff,
   getStaffByDepartment,
   assignStaffToDepartment,
-  getStaffNotInDepartment } = require("../controllers/staffController");
+  getStaffNotInDepartment,
+  removeStaffFromDepartment } = require("../controllers/staffController");
 const { handleSignUp,
   handleLogin,
   getAccount,
@@ -15,7 +16,8 @@ const { createDepartment,
   getDepartments,
   getDepartment,
   updateDepartment,
-  deleteDepartment, } = require("../controllers/departmentController");
+  deleteDepartment,
+  getAvailableManagers } = require("../controllers/departmentController");
 const auth = require("../middleware/jwt"); // Importing delay middleware
 
 const routerAPI = express.Router();
@@ -39,6 +41,7 @@ routerAPI.get("/detail-employee/:id", getOneStaff);
 routerAPI.get("/staff/departments/:departmentId/", getStaffByDepartment);
 routerAPI.put("/staff/assign-department", assignStaffToDepartment);
 routerAPI.get("/staff/not-in-department/:departmentId", getStaffNotInDepartment);
+routerAPI.put("/staff/remove-from-department", removeStaffFromDepartment);
 
 
 //department routes
@@ -47,5 +50,6 @@ routerAPI.get("/departments", getDepartments);
 routerAPI.get("/departments/:id", getDepartment);
 routerAPI.put("/departments/:id", updateDepartment);
 routerAPI.delete("/departments/:id", deleteDepartment);
+routerAPI.get("/staff/available-managers", getAvailableManagers);
 
 module.exports = routerAPI; //export default

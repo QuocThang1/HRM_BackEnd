@@ -6,7 +6,8 @@ const { getStaffService,
   updateStaffService,
   getStaffByDepartmentService,
   assignStaffToDepartmentService,
-  getStaffNotInDepartmentService } = require("../services/staffService");
+  getStaffNotInDepartmentService,
+  removeStaffFromDepartmentService } = require("../services/staffService");
 
 const getStaff = async (req, res) => {
   const data = await getStaffService();
@@ -86,7 +87,6 @@ const deleteStaff = async (req, res) => {
 const getStaffByDepartment = async (req, res) => {
   try {
     const { departmentId } = req.params;
-    console.log("Department ID:", departmentId);
     const staffList = await getStaffByDepartmentService(departmentId);
     return res.status(200).json({
       EC: 0,
@@ -141,6 +141,26 @@ const getStaffNotInDepartment = async (req, res) => {
   }
 };
 
+
+const removeStaffFromDepartment = async (req, res) => {
+  try {
+    const { staffId } = req.body;
+    if (!staffId) {
+      return res.status(400).json({ EC: 1, EM: "staffId là bắt buộc" });
+    }
+    const updatedStaff = await removeStaffFromDepartmentService(staffId);
+    return res.status(200).json({
+      EC: 0,
+      EM: "Staff removed from department successfully",
+      data: updatedStaff,
+    });
+  } catch (error) {
+    console.error("Error in removeStaffFromDepartment:", error);
+    return res.status(500).json({ EC: 1, EM: "Error removing staff from department" });
+  }
+};
+
+
 module.exports = {
   getStaff,
   addNewStaff,
@@ -149,5 +169,6 @@ module.exports = {
   deleteStaff,
   getStaffByDepartment,
   assignStaffToDepartment,
-  getStaffNotInDepartment
+  getStaffNotInDepartment,
+  removeStaffFromDepartment
 };
