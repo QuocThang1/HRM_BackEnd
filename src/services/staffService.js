@@ -113,6 +113,10 @@ const getStaffNotInDepartmentService = async (departmentId) => {
   return await staffDAO.getStaffNotInDepartment(departmentId);
 };
 
+const removeStaffFromDepartmentService = async (staffId) => {
+  return await staffDAO.removeStaffFromDepartment(staffId);
+};
+
 module.exports = {
   getStaffService,
   addNewStaffService,
@@ -121,5 +125,6 @@ module.exports = {
   deleteStaffService,
   getStaffByDepartmentService,
   assignStaffToDepartmentService,
-  getStaffNotInDepartmentService
+  getStaffNotInDepartmentService,
+  removeStaffFromDepartmentService,
 };

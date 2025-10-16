@@ -106,6 +106,7 @@ class StaffDAO {
   async getStaffNotInDepartment(departmentId) {
     try {
       return await Staff.find({
+        role: "staff",
         $or: [
           { departmentId: { $exists: false } },
           { departmentId: null },
@@ -117,6 +118,30 @@ class StaffDAO {
     }
   }
 
+  async removeStaffFromDepartment(staffId) {
+    try {
+      // Lấy thông tin staff trước khi update
+      const staff = await Staff.findById(staffId);
+
+      // Nếu staff là manager, xóa managerId ở department tương ứng
+      if (staff && staff.role === "manager" && staff.departmentId) {
+        await Department.updateOne(
+          { _id: staff.departmentId, managerId: staffId },
+          { $unset: { managerId: "" } }
+        );
+      }
+
+      // Xóa departmentId khỏi staff
+      return await Staff.findByIdAndUpdate(
+        staffId,
+        { departmentId: null },
+        { new: true, runValidators: true }
+      ).select("-password");
+    } catch (error) {
+      console.error("Error removing staff from department:", error);
+      throw error;
+    }
+  }
 
 }
 
