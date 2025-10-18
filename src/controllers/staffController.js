@@ -1,165 +1,113 @@
-const { get } = require("mongoose");
-const { getStaffService,
+const {
+  getStaffService,
   addNewStaffService,
   getOneStaffService,
-  deleteStaffService,
   updateStaffService,
+  deleteStaffService,
   getStaffByDepartmentService,
   assignStaffToDepartmentService,
   getStaffNotInDepartmentService,
-  removeStaffFromDepartmentService } = require("../services/staffService");
+  removeStaffFromDepartmentService
+} = require("../services/staffService");
 
 const getStaff = async (req, res) => {
-  const data = await getStaffService();
-  return res.status(200).json(data);
+  try {
+    const data = await getStaffService();
+    res.json(data);
+  } catch (error) {
+    console.error("Controller Error - getStaff:", error);
+    res.json({ EC: -1, EM: "Internal Server Error" });
+  }
 };
 
 const addNewStaff = async (req, res) => {
   try {
     const { username, password, fullName, email, phone, address } = req.body;
-
-    if (!username || !password || !fullName || !email || !phone || !address) {
-      return res.status(400).json({ message: "Missing required fields" });
-    }
-
-    const staff = await addNewStaffService({
-      username,
-      password,
-      fullName,
-      email,
-      phone,
-      address,
-    });
-
-    return res.status(201).json({
-      message: "Staff created successfully",
-      staff,
-    });
+    const data = await addNewStaffService({ username, password, fullName, email, phone, address });
+    res.json(data);
   } catch (error) {
-    return res.status(400).json({ message: error.message });
+    console.error("Controller Error - addNewStaff:", error);
+    res.json({ EC: -1, EM: "Internal Server Error" });
   }
 };
 
 const getOneStaff = async (req, res) => {
-  const { id } = req.params;
   try {
-    const result = await getOneStaffService(id);
-    if (result.EC !== 0) {
-      return res.status(404).json(result);
-    }
-    return res.status(200).json(result);
+    const { id } = req.params;
+    const data = await getOneStaffService(id);
+    res.json(data);
   } catch (error) {
-    return res.status(500).json({
-      EC: 2,
-      EM: "Server error",
-    });
+    console.error("Controller Error - getOneStaff:", error);
+    res.json({ EC: -1, EM: "Internal Server Error" });
   }
 };
 
 const updateStaff = async (req, res) => {
-  const staffId = req.params.id; // ID nhận từ URL
-  const updateData = req.body; // dữ liệu update gửi từ frontend
-
-  const result = await updateStaffService(staffId, updateData);
-
-  if (result.success) {
-    return res.status(200).json({
-      message: "Staff updated successfully",
-      staff: result.staff,
-    });
-  } else {
-    return res.status(404).json({ message: result.message });
+  try {
+    const staffId = req.params.id;
+    const updateData = req.body;
+    const data = await updateStaffService(staffId, updateData);
+    res.json(data);
+  } catch (error) {
+    console.error("Controller Error - updateStaff:", error);
+    res.json({ EC: -1, EM: "Internal Server Error" });
   }
 };
 
 const deleteStaff = async (req, res) => {
-  const staffId = req.params.id; // ID nhận từ route /api/staff/:id
-
-  const result = await deleteStaffService(staffId);
-
-  if (result.success) {
-    return res.status(200).json({ message: "Staff deleted successfully", staff: result.staff });
-  } else {
-    return res.status(404).json({ message: result.message });
+  try {
+    const { id } = req.params;
+    const data = await deleteStaffService(id);
+    res.json(data);
+  } catch (error) {
+    console.error("Controller Error - deleteStaff:", error);
+    res.json({ EC: -1, EM: "Internal Server Error" });
   }
 };
 
 const getStaffByDepartment = async (req, res) => {
   try {
     const { departmentId } = req.params;
-    const staffList = await getStaffByDepartmentService(departmentId);
-    return res.status(200).json({
-      EC: 0,
-      EM: "Fetch staff by department successfully",
-      data: staffList,
-    });
+    const data = await getStaffByDepartmentService(departmentId);
+    res.json(data);
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      EC: 1,
-      EM: "Error fetching staff by department",
-    });
+    console.error("Controller Error - getStaffByDepartment:", error);
+    res.json({ EC: -1, EM: "Internal Server Error" });
   }
 };
 
 const assignStaffToDepartment = async (req, res) => {
   try {
     const { staffId, departmentId } = req.body;
-
-    if (!staffId || !departmentId) {
-      return res.status(400).json({ EC: 1, EM: "staffId và departmentId là bắt buộc" });
-    }
-
-    const updatedStaff = await assignStaffToDepartmentService(staffId, departmentId);
-    return res.status(200).json({
-      EC: 0,
-      EM: "Staff assigned to department successfully",
-      data: updatedStaff,
-    });
+    const data = await assignStaffToDepartmentService(staffId, departmentId);
+    res.json(data);
   } catch (error) {
-    console.error("Error in assignStaffToDepartment:", error);
-    return res.status(500).json({ EC: 1, EM: "Error assigning staff to department" });
+    console.error("Controller Error - assignStaffToDepartment:", error);
+    res.json({ EC: -1, EM: "Internal Server Error" });
   }
 };
-
 
 const getStaffNotInDepartment = async (req, res) => {
   try {
     const { departmentId } = req.params;
-    const staffList = await getStaffNotInDepartmentService(departmentId);
-    return res.status(200).json({
-      EC: 0,
-      EM: "Fetch staff not in department successfully",
-      data: staffList,
-    });
+    const data = await getStaffNotInDepartmentService(departmentId);
+    res.json(data);
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      EC: 1,
-      EM: "Error fetching staff not in department",
-    });
+    console.error("Controller Error - getStaffNotInDepartment:", error);
+    res.json({ EC: -1, EM: "Internal Server Error" });
   }
 };
-
 
 const removeStaffFromDepartment = async (req, res) => {
   try {
     const { staffId } = req.body;
-    if (!staffId) {
-      return res.status(400).json({ EC: 1, EM: "staffId là bắt buộc" });
-    }
-    const updatedStaff = await removeStaffFromDepartmentService(staffId);
-    return res.status(200).json({
-      EC: 0,
-      EM: "Staff removed from department successfully",
-      data: updatedStaff,
-    });
+    const data = await removeStaffFromDepartmentService(staffId);
+    res.json(data);
   } catch (error) {
-    console.error("Error in removeStaffFromDepartment:", error);
-    return res.status(500).json({ EC: 1, EM: "Error removing staff from department" });
+    console.error("Controller Error - removeStaffFromDepartment:", error);
+    res.json({ EC: -1, EM: "Internal Server Error" });
   }
 };
-
 
 module.exports = {
   getStaff,
@@ -170,5 +118,5 @@ module.exports = {
   getStaffByDepartment,
   assignStaffToDepartment,
   getStaffNotInDepartment,
-  removeStaffFromDepartment
+  removeStaffFromDepartment,
 };

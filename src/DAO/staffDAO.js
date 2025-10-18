@@ -2,15 +2,24 @@ const Staff = require("../models/staff");
 const Department = require("../models/department");
 
 class StaffDAO {
-  async getStaffByID(staffId) {
+  async getAllStaff() {
     try {
-      const staff = await Staff.findById(staffId).select("-password");
-      return staff;
+      return await Staff.find().select("-password");
     } catch (error) {
-      console.error("Error fetching staff by ID:", error);
+      console.error("DAO Error - getAllStaff:", error);
       throw error;
     }
   }
+
+  async getStaffByID(staffId) {
+    try {
+      return await Staff.findById(staffId).select("-password");
+    } catch (error) {
+      console.error("DAO Error - getStaffByID:", error);
+      throw error;
+    }
+  }
+
 
   async deleteStaffByID(staffId) {
     try {
@@ -21,25 +30,18 @@ class StaffDAO {
           { $unset: { managerId: "" } }
         );
       }
-
       return deletedStaff;
     } catch (error) {
-      console.error("Error deleting staff by ID:", error);
+      console.error("DAO Error - deleteStaffByID:", error);
       throw error;
     }
   }
 
   async updateStaffByID(staffId, updateData) {
     try {
-      // { new: true } trả về document sau khi update
-      const updatedStaff = await Staff.findByIdAndUpdate(
-        staffId,
-        updateData,
-        { new: true }
-      ).select("-password"); // loại bỏ password khi trả về
-      return updatedStaff;
+      return await Staff.findByIdAndUpdate(staffId, updateData, { new: true }).select("-password");
     } catch (error) {
-      console.error("Error updating staff by ID:", error);
+      console.error("DAO Error - updateStaffByID:", error);
       throw error;
     }
   }
@@ -48,7 +50,7 @@ class StaffDAO {
     try {
       return await Staff.findOne({ "personalInfo.email": email });
     } catch (error) {
-      console.error("Error finding staff by email:", error);
+      console.error("DAO Error - findByEmail:", error);
       throw error;
     }
   }
@@ -58,87 +60,67 @@ class StaffDAO {
       const staff = new Staff(data);
       return await staff.save();
     } catch (error) {
-      console.error("Error creating staff:", error);
+      console.error("DAO Error - createStaff:", error);
       throw error;
     }
   }
 
   async updateProfile(staffId, updateData) {
     try {
-      const updatedStaff = await Staff.findByIdAndUpdate(
-        staffId,
-        updateData,
-        { new: true, runValidators: true } // validate theo schema
-      ).select("-password"); // loại bỏ password khi trả về
-
-      return updatedStaff; // có thể null nếu không tìm thấy
+      return await Staff.findByIdAndUpdate(staffId, updateData, { new: true, runValidators: true }).select("-password");
     } catch (error) {
-      console.error("Error in DAO updateProfile:", error);
+      console.error("DAO Error - updateProfile:", error);
       throw error;
     }
   }
 
   async getStaffByDepartmentId(departmentId) {
     try {
-      // Lọc nhân viên theo departmentId, không cần dùng 'new'
-      return await Staff.find({ departmentId: departmentId }).select(
-        "personalInfo role _id"
-      );
+      return await Staff.find({ departmentId }).select("personalInfo role _id");
     } catch (error) {
-      console.error("Error fetching staff by department:", error);
+      console.error("DAO Error - getStaffByDepartmentId:", error);
       throw error;
     }
   }
 
   async assignStaffToDepartment(staffId, departmentId) {
     try {
-      return await Staff.findByIdAndUpdate(
-        staffId,
-        { departmentId: departmentId },
-        { new: true }
-      ).select("-password");
+      return await Staff.findByIdAndUpdate(staffId, { departmentId }, { new: true }).select("-password");
     } catch (error) {
-      console.error("Error assigning staff to department:", error);
+      console.error("DAO Error - assignStaffToDepartment:", error);
       throw error;
     }
   }
 
-  async getStaffNotInDepartment(departmentId) {
+  async getStaffNotInDepartment() {
     try {
       return await Staff.find({
         role: "staff",
-        $or: [
-          { departmentId: { $exists: false } },
-          { departmentId: null },
-        ]
+        $or: [{ departmentId: { $exists: false } }, { departmentId: null }],
       }).select("personalInfo role _id");
     } catch (error) {
-      console.error("Error fetching staff not in department:", error);
+      console.error("DAO Error - getStaffNotInDepartment:", error);
       throw error;
     }
   }
 
   async removeStaffFromDepartment(staffId) {
     try {
-      // Lấy thông tin staff trước khi update
       const staff = await Staff.findById(staffId);
-
-      // Nếu staff là manager, xóa managerId ở department tương ứng
       if (staff && staff.role === "manager" && staff.departmentId) {
         await Department.updateOne(
           { _id: staff.departmentId, managerId: staffId },
-          { $unset: { managerId: "" } }
+          { managerId: null }
         );
       }
 
-      // Xóa departmentId khỏi staff
       return await Staff.findByIdAndUpdate(
         staffId,
         { departmentId: null },
         { new: true, runValidators: true }
       ).select("-password");
     } catch (error) {
-      console.error("Error removing staff from department:", error);
+      console.error("DAO Error - removeStaffFromDepartment:", error);
       throw error;
     }
   }

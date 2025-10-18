@@ -1,67 +1,74 @@
-const { createDepartmentService, getDepartmentService, getDepartmentsService, updateDepartmentService, deleteDepartmentService, getAvailableManagersService } = require("../services/departmentService");
+const {
+    createDepartmentService,
+    getDepartmentsService,
+    getDepartmentService,
+    updateDepartmentService,
+    deleteDepartmentService,
+    getAvailableManagersService
+} = require("../services/departmentService");
 
 const createDepartment = async (req, res) => {
     try {
         const { departmentName, description, managerId } = req.body;
-        const newDept = await createDepartmentService({ departmentName, description, managerId });
-        return res.status(201).json({ EC: 0, EM: "Department created successfully", data: newDept });
+        const data = await createDepartmentService(departmentName, description, managerId);
+        res.json(data);
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ EC: 1, EM: "Error creating department" });
+        console.error("Controller Error - createDepartment:", error);
+        res.json({ EC: -1, EM: "Internal Server Error" });
     }
 };
 
 const getDepartments = async (req, res) => {
     try {
-        const departments = await getDepartmentsService();
-        return res.status(200).json(departments);
+        const data = await getDepartmentsService();
+        res.json(data);
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ EC: 1, EM: "Error fetching departments" });
+        console.error("Controller Error - getDepartments:", error);
+        res.json({ EC: -1, EM: "Internal Server Error" });
     }
 };
 
 const getDepartment = async (req, res) => {
     try {
         const { id } = req.params;
-        const department = await getDepartmentService(id);
-        return res.status(200).json(department);
+        const data = await getDepartmentService(id);
+        res.json(data);
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ EC: 1, EM: "Error fetching department" });
+        console.error("Controller Error - getDepartment:", error);
+        res.json({ EC: -1, EM: "Internal Server Error" });
     }
 };
 
 const updateDepartment = async (req, res) => {
     try {
         const { id } = req.params;
-        const data = req.body;
-        const updatedDept = await updateDepartmentService(id, data);
-        return res.status(200).json({ EC: 0, EM: "Department updated successfully", data: updatedDept });
+        const { departmentName, description, managerId } = req.body;
+        const data = await updateDepartmentService(id, { departmentName, description, managerId });
+        res.json(data);
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ EC: 1, EM: "Error updating department" });
+        console.error("Controller Error - updateDepartment:", error);
+        res.json({ EC: -1, EM: "Internal Server Error" });
     }
 };
 
 const deleteDepartment = async (req, res) => {
     try {
         const { id } = req.params;
-        await deleteDepartmentService(id);
-        return res.status(200).json({ EC: 0, EM: "Department deleted successfully" });
+        const data = await deleteDepartmentService(id);
+        res.json(data);
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ EC: 1, EM: "Error deleting department" });
+        console.error("Controller Error - deleteDepartment:", error);
+        res.json({ EC: -1, EM: "Internal Server Error" });
     }
 };
 
 const getAvailableManagers = async (req, res) => {
     try {
-        const managers = await getAvailableManagersService();
-        return res.status(200).json({ EC: 0, EM: "Success", data: managers });
+        const data = await getAvailableManagersService();
+        res.json(data);
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ EC: 1, EM: "Error fetching available managers" });
+        console.error("Controller Error - getAvailableManagers:", error);
+        res.json({ EC: -1, EM: "Internal Server Error" });
     }
 };
 
@@ -71,5 +78,5 @@ module.exports = {
     getDepartment,
     updateDepartment,
     deleteDepartment,
-    getAvailableManagers
+    getAvailableManagers,
 };
