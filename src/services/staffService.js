@@ -1,120 +1,108 @@
-require("dotenv").config();
-const Staff = require("../models/staff.js");
 const bcrypt = require("bcrypt");
-const staffDAO = require("../DAO/staffDAO.js");
+const staffDAO = require("../DAO/staffDAO");
 
-// GET ALL STAFFS
 const getStaffService = async () => {
   try {
-    const staffs = await Staff.find({})
-      .select("username role personalInfo.fullName personalInfo.email")
-      .lean();
-
-    const result = staffs.map((s) => ({
-      _id: s._id,
-      username: s.username,
-      role: s.role,
-      fullName: s.personalInfo?.fullName || "",
-      email: s.personalInfo?.email || "",
-    }));
-
-    return result;
+    const staffs = await staffDAO.getAllStaff();
+    return { EC: 0, EM: "Success", data: staffs };
   } catch (error) {
-    console.error("Error retrieving staffs:", error);
-    return null;
+    console.error("Service Error - getStaffService:", error);
+    return { EC: -1, EM: "Error fetching staff" };
   }
 };
 
 const addNewStaffService = async ({ username, password, fullName, email, phone, address }) => {
   try {
-    // Check trùng email
     const existing = await staffDAO.findByEmail(email);
-    if (existing) {
-      throw new Error("Email already exists");
-    }
+    if (existing) return { EC: 1, EM: "Email already exists" };
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Chuẩn bị data
-    const staffData = {
+    const newStaffData = {
       username,
       password: hashedPassword,
-      personalInfo: {
-        fullName,
-        email,
-        phone,
-        address,
-      },
+      personalInfo: { fullName, email, phone, address },
     };
 
-    // Tạo mới staff
-    const newStaff = await staffDAO.createStaff(staffData);
-    return newStaff;
+    const newStaff = await staffDAO.createStaff(newStaffData);
+    return { EC: 0, EM: "Staff created successfully", data: newStaff };
   } catch (error) {
-    console.error("Error in addNewEmployeeService:", error);
-    throw error;
+    console.error("Service Error - addNewStaffService:", error);
+    return { EC: -1, EM: "Error creating staff" };
   }
 };
 
 const getOneStaffService = async (staffId) => {
   try {
     const staff = await staffDAO.getStaffByID(staffId);
-    if (!staff) {
-      return { EC: 1, EM: "Staff not found" };
-    }
-
-    return {
-      EC: 0,
-      EM: "Success",
-      staff,
-    };
+    if (!staff) return { EC: 1, EM: "Staff not found" };
+    return { EC: 0, EM: "Success", data: staff };
   } catch (error) {
-    console.error("Error in detailEmployeeService:", error);
-    return { EC: 2, EM: "Server error" };
+    console.error("Service Error - getOneStaffService:", error);
+    return { EC: -1, EM: "Error fetching staff" };
   }
 };
 
 const updateStaffService = async (staffId, updateData) => {
   try {
     const updatedStaff = await staffDAO.updateStaffByID(staffId, updateData);
-    if (!updatedStaff) {
-      return { success: false, message: "Staff not found" };
-    }
-    return { success: true, staff: updatedStaff };
+    if (!updatedStaff) return { EC: 1, EM: "Staff not found" };
+    return { EC: 0, EM: "Staff updated successfully", data: updatedStaff };
   } catch (error) {
-    console.error("Error in updateStaffService:", error);
-    return { success: false, message: "Error updating staff" };
+    console.error("Service Error - updateStaffService:", error);
+    return { EC: -1, EM: "Error updating staff" };
   }
 };
 
 const deleteStaffService = async (staffId) => {
   try {
     const deletedStaff = await staffDAO.deleteStaffByID(staffId);
-    if (!deletedStaff) {
-      return { success: false, message: "Staff not found" };
-    }
-    return { success: true, staff: deletedStaff };
+    if (!deletedStaff) return { EC: 1, EM: "Staff not found" };
+    return { EC: 0, EM: "Staff deleted successfully", data: deletedStaff };
   } catch (error) {
-    console.error("Error in deleteStaffService:", error);
-    return { success: false, message: "Error deleting staff" };
+    console.error("Service Error - deleteStaffService:", error);
+    return { EC: -1, EM: "Error deleting staff" };
   }
 };
 
 const getStaffByDepartmentService = async (departmentId) => {
-  return await staffDAO.getStaffByDepartmentId(departmentId);
+  try {
+    const staffList = await staffDAO.getStaffByDepartmentId(departmentId);
+    return { EC: 0, EM: "Success", data: staffList };
+  } catch (error) {
+    console.error("Service Error - getStaffByDepartmentService:", error);
+    return { EC: -1, EM: "Error fetching staff by department" };
+  }
 };
 
 const assignStaffToDepartmentService = async (staffId, departmentId) => {
-  return await staffDAO.assignStaffToDepartment(staffId, departmentId);
+  try {
+    const updatedStaff = await staffDAO.assignStaffToDepartment(staffId, departmentId);
+    return { EC: 0, EM: "Staff assigned to department successfully", data: updatedStaff };
+  } catch (error) {
+    console.error("Service Error - assignStaffToDepartmentService:", error);
+    return { EC: -1, EM: "Error assigning staff to department" };
+  }
 };
 
 const getStaffNotInDepartmentService = async (departmentId) => {
-  return await staffDAO.getStaffNotInDepartment(departmentId);
+  try {
+    const staffList = await staffDAO.getStaffNotInDepartment(departmentId);
+    return { EC: 0, EM: "Success", data: staffList };
+  } catch (error) {
+    console.error("Service Error - getStaffNotInDepartmentService:", error);
+    return { EC: -1, EM: "Error fetching staff not in department" };
+  }
 };
 
 const removeStaffFromDepartmentService = async (staffId) => {
-  return await staffDAO.removeStaffFromDepartment(staffId);
+  try {
+    const updatedStaff = await staffDAO.removeStaffFromDepartment(staffId);
+    return { EC: 0, EM: "Staff removed from department successfully", data: updatedStaff };
+  } catch (error) {
+    console.error("Service Error - removeStaffFromDepartmentService:", error);
+    return { EC: -1, EM: "Error removing staff from department" };
+  }
 };
 
 module.exports = {
