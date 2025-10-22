@@ -1,5 +1,8 @@
 const Department = require("../models/department");
 const Staff = require("../models/staff");
+const DepartmentReview = require("../models/departmentReview"); 1
+const mongoose = require("mongoose");
+const staff = require("../models/staff");
 
 class DepartmentDAO {
     async createDepartment(data) {
@@ -76,6 +79,88 @@ class DepartmentDAO {
             );
         } catch (error) {
             console.error("DAO Error - removeDepartmentFromStaffs:", error);
+            throw error;
+        }
+    }
+
+    async createDepartmentReview(data) {
+        try {
+            const newReview = new DepartmentReview({
+                departmentId: data.departmentId,
+                adminId: data.staffId, // staff chính là người đánh giá
+                month: data.month,
+                score: data.score,
+                comments: data.comments || null,
+                createdAt: new Date(),
+            });
+            return await newReview.save();
+        } catch (error) {
+            console.error("DAO Error - createDepartmentReview:", error);
+            throw error;
+        }
+    };
+
+    async getDepartmentReviews(departmentId, month) {
+        try {
+            const filter = {};
+            if (departmentId) filter.departmentId = departmentId;
+            if (month) filter.month = month;
+
+            return await DepartmentReview.find(filter)
+                .populate("departmentId", "departmentName")
+                .populate("adminId", "personalInfo.fullName personalInfo.email")
+                .sort({ createdAt: -1 });
+        } catch (error) {
+            console.error("DAO Error - getDepartmentReviews:", error);
+            throw error;
+        }
+    };
+
+    async findByDeptAdminMonth(data) {
+        try {
+            return await DepartmentReview.findOne({
+                departmentId: data.departmentId,
+                adminId: data.staffId,
+                month: data.month
+            });
+        } catch (error) {
+            console.error("DAO Error - findByDeptAdminMonth:", error);
+            throw error;
+        }
+    }
+
+    async getDepartmentReviewByAdmin(staffId, month) {
+        try {
+            const filter = { adminId: staffId };
+            if (month) filter.month = month;
+            return await DepartmentReview.find(filter).
+                populate("departmentId", "departmentName").
+                populate("adminId", "personalInfo.fullName personalInfo.email").
+                sort({ createdAt: -1 });
+        } catch (error) {
+            console.error("DAO Error - getByAdmin:", error);
+            throw error;
+        }
+    }
+
+    async updateDepartmentReview(reviewId, updatedData) {
+        try {
+            return await DepartmentReview.findByIdAndUpdate(
+                reviewId,
+                updatedData,
+                { new: true }
+            );
+        } catch (error) {
+            console.error("DAO Error - updateReview:", error);
+            throw error;
+        }
+    }
+
+    async deleteDepartmentReview(reviewId) {
+        try {
+            return await DepartmentReview.findByIdAndDelete(reviewId);
+        } catch (error) {
+            console.error("DAO Error - deleteReview:", error);
             throw error;
         }
     }
