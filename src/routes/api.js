@@ -17,7 +17,12 @@ const { createDepartment,
   getDepartment,
   updateDepartment,
   deleteDepartment,
-  getAvailableManagers } = require("../controllers/departmentController");
+  getAvailableManagers,
+  createDepartmentReview,
+  getDepartmentReviews,
+  getDepartmentReviewsByAdmin,
+  updateDepartmentReview,
+  deleteDepartmentReview } = require("../controllers/departmentController");
 const auth = require("../middleware/jwt"); // Importing delay middleware
 
 const routerAPI = express.Router();
@@ -28,12 +33,14 @@ routerAPI.get("/", (req, res) => {
   return res.status(200).json("Hello World API");
 });
 
-//staff routes
+//account routes
 routerAPI.post("/register", handleSignUp);
 routerAPI.post("/login", handleLogin); // Assuming you have a handleLogin function
 routerAPI.get("/staff", getStaff); // Example route for getting staff data
 routerAPI.get("/account", getAccount); // Example route for getting account data
 routerAPI.put("/profile", updateProfile); // Example route for updating profile
+
+//staff routes
 routerAPI.post("/add-employee", addNewStaff); // New route for adding an employee
 routerAPI.delete("/:id", deleteStaff);
 routerAPI.put("/:id", updateStaff);
@@ -51,5 +58,13 @@ routerAPI.get("/departments/:id", getDepartment);
 routerAPI.put("/departments/:id", updateDepartment);
 routerAPI.delete("/departments/:id", deleteDepartment);
 routerAPI.get("/staff/available-managers", getAvailableManagers);
+
+//department review routes
+routerAPI.post("/departments/:id/reviews", createDepartmentReview);
+routerAPI.get("/departments/:id/reviews", getDepartmentReviews);
+routerAPI.get("/departments/reviews/admin", getDepartmentReviewsByAdmin);
+routerAPI.put("/departments/reviews/:reviewId", updateDepartmentReview);
+routerAPI.delete("/departments/reviews/:reviewId", deleteDepartmentReview);
+
 
 module.exports = routerAPI; //export default

@@ -78,6 +78,63 @@ const getAvailableManagersService = async () => {
     }
 };
 
+const createDepartmentReviewService = async (reviewData) => {
+    try {
+        const exist = await departmentDAO.findByDeptAdminMonth(reviewData);
+        if (exist) return { EC: 1, EM: "You already reviewed this department for this month", data: exist };
+        if (reviewData.score < 1 || reviewData.score > 10) return { EC: 2, EM: "Score must be between 1 and 10" };
+
+        const newReview = await departmentDAO.createDepartmentReview(reviewData);
+        return { EC: 0, EM: "Department reviewed successfully", data: newReview };
+    } catch (error) {
+        console.error("Service Error - createDepartmentReviewService:", error);
+        return { EC: -1, EM: "Error creating department review" };
+    }
+};
+
+const getDepartmentReviewsService = async (departmentId, month) => {
+    try {
+        const reviews = await departmentDAO.getDepartmentReviews(departmentId, month);
+        return { EC: 0, EM: "Fetched department reviews successfully", data: reviews };
+    } catch (error) {
+        console.error("Service Error - getDepartmentReviewsService:", error);
+        return { EC: -1, EM: "Error fetching department reviews" };
+    }
+};
+
+const getDepartmentReviewsByAdminService = async (staffId, month) => {
+    try {
+        const reviews = await departmentDAO.getDepartmentReviewByAdmin(staffId, month);
+        return { EC: 0, EM: "Fetched reviews successfully", data: reviews };
+    } catch (error) {
+        console.error("Service Error - getDepartmentReviewsByAdminService:", error);
+        return { EC: -1, EM: "Error fetching reviews" };
+    }
+};
+
+const updateDepartmentReviewService = async (reviewId, updatedData) => {
+    try {
+        if (updatedData.score && (updatedData.score < 1 || updatedData.score > 10)) {
+            return { EC: 2, EM: "Score must be between 1 and 10" };
+        }
+        const updated = await departmentDAO.updateDepartmentReview(reviewId, updatedData);
+        return { EC: 0, EM: "Updated successfully", data: updated };
+    } catch (error) {
+        console.error("Service Error - updateDepartmentReviewService:", error);
+        return { EC: -1, EM: "Error updating review" };
+    }
+};
+
+const deleteDepartmentReviewService = async (reviewId) => {
+    try {
+        await departmentDAO.deleteDepartmentReview(reviewId);
+        return { EC: 0, EM: "Deleted successfully" };
+    } catch (error) {
+        console.error("Service Error - deleteDepartmentReviewService:", error);
+        return { EC: -1, EM: "Error deleting review" };
+    }
+};
+
 module.exports = {
     createDepartmentService,
     getDepartmentsService,
@@ -85,4 +142,9 @@ module.exports = {
     updateDepartmentService,
     deleteDepartmentService,
     getAvailableManagersService,
+    createDepartmentReviewService,
+    getDepartmentReviewsService,
+    getDepartmentReviewsByAdminService,
+    updateDepartmentReviewService,
+    deleteDepartmentReviewService,
 };

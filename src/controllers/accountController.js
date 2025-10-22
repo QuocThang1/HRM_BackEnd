@@ -5,7 +5,6 @@ const {
     updateProfileService,
 } = require("../services/accountService");
 
-// [POST] /signup
 const handleSignUp = async (req, res) => {
     try {
         const { name, email, password, address, phone, gender } = req.body;
@@ -17,7 +16,6 @@ const handleSignUp = async (req, res) => {
     }
 };
 
-// [POST] /login
 const handleLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -29,7 +27,6 @@ const handleLogin = async (req, res) => {
     }
 };
 
-// [GET] /account
 const getAccount = async (req, res) => {
     try {
         const staffId = req.staff._id;
@@ -41,7 +38,6 @@ const getAccount = async (req, res) => {
     }
 };
 
-// [PUT] /profile
 const updateProfile = async (req, res) => {
     try {
         const { name, email, address, phone } = req.body;
