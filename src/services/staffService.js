@@ -11,7 +11,7 @@ const getStaffService = async () => {
   }
 };
 
-const addNewStaffService = async ({ username, password, fullName, email, phone, address }) => {
+const addNewStaffService = async ({ password, fullName, email, phone, address, citizenId, gender, dob }) => {
   try {
     const existing = await staffDAO.findByEmail(email);
     if (existing) return { EC: 1, EM: "Email already exists" };
@@ -19,9 +19,8 @@ const addNewStaffService = async ({ username, password, fullName, email, phone, 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newStaffData = {
-      username,
       password: hashedPassword,
-      personalInfo: { fullName, email, phone, address },
+      personalInfo: { fullName, email, phone, address, citizenId, gender, dob },
     };
 
     const newStaff = await staffDAO.createStaff(newStaffData);

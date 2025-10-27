@@ -61,6 +61,9 @@ class StaffDAO {
       return await staff.save();
     } catch (error) {
       console.error("DAO Error - createStaff:", error);
+      if (error.errInfo && error.errInfo.details) {
+        console.error("Validation details:", JSON.stringify(error.errInfo.details, null, 2));
+      }
       throw error;
     }
   }

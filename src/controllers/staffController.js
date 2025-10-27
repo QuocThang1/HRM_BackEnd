@@ -22,8 +22,8 @@ const getStaff = async (req, res) => {
 
 const addNewStaff = async (req, res) => {
   try {
-    const { username, password, fullName, email, phone, address } = req.body;
-    const data = await addNewStaffService({ username, password, fullName, email, phone, address });
+    const { password, fullName, email, phone, address, citizenId, gender, dob } = req.body;
+    const data = await addNewStaffService({ password, fullName, email, phone, address, citizenId, gender, dob });
     res.json(data);
   } catch (error) {
     console.error("Controller Error - addNewStaff:", error);

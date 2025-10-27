@@ -20,7 +20,10 @@ class CandidateDAO {
 
     async getAllCandidates(status) {
         try {
-            const filter = { role: "candidate" };
+            const filter = {
+                role: "candidate",
+                "candidateInfo.cvUrl": { $exists: true, $ne: null }
+            };
             if (status) {
                 filter["candidateInfo.status"] = status;
             }

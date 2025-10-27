@@ -5,7 +5,7 @@ const staffDAO = require("../DAO/staffDAO");
 
 const saltRounds = 10;
 
-const handleSignUpService = async (name, email, password, address, phone, gender) => {
+const handleSignUpService = async (name, email, password, address, phone, gender, citizenId, dob) => {
     try {
         // Kiểm tra email đã tồn tại chưa
         const existingStaff = await staffDAO.findByEmail(email);
@@ -16,7 +16,6 @@ const handleSignUpService = async (name, email, password, address, phone, gender
         const now = new Date();
 
         const newStaffData = {
-            username: email,
             password: hashedPassword,
             role: "candidate",
             personalInfo: {
@@ -25,6 +24,8 @@ const handleSignUpService = async (name, email, password, address, phone, gender
                 phone: phone || "",
                 address: address || "",
                 gender: gender || "other",
+                citizenId: citizenId || "",
+                dob: dob || null,
             },
             created_at: now,
             updated_at: now,
@@ -77,13 +78,16 @@ const handleLoginService = async (email, password) => {
     }
 };
 
-const updateProfileService = async (staffId, name, email, address, phone) => {
+const updateProfileService = async (staffId, name, email, address, phone, citizenId, dob, gender) => {
     try {
         const updateData = {
             "personalInfo.fullName": name,
             "personalInfo.email": email,
             "personalInfo.address": address,
             "personalInfo.phone": phone,
+            "personalInfo.citizenId": citizenId,
+            "personalInfo.dob": dob,
+            "personalInfo.gender": gender,
         };
 
         const updatedStaff = await staffDAO.updateProfile(staffId, updateData);

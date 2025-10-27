@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 
 const staffSchema = new mongoose.Schema(
   {
-    username: String,
     password: String,
     role: {
       type: String,
