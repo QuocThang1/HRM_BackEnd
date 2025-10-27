@@ -18,7 +18,7 @@ const handleSignUpService = async (name, email, password, address, phone, gender
         const newStaffData = {
             username: email,
             password: hashedPassword,
-            role: "staff",
+            role: "candidate",
             personalInfo: {
                 fullName: name,
                 email,
