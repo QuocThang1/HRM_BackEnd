@@ -23,6 +23,10 @@ const { createDepartment,
   getDepartmentReviewsByAdmin,
   updateDepartmentReview,
   deleteDepartmentReview } = require("../controllers/departmentController");
+const { submitCV,
+  getAllCandidates,
+  updateCandidateStatus
+} = require("../controllers/candidateController");
 const auth = require("../middleware/jwt"); // Importing delay middleware
 
 const routerAPI = express.Router();
@@ -65,6 +69,11 @@ routerAPI.get("/departments/:id/reviews", getDepartmentReviews);
 routerAPI.get("/departments/reviews/admin", getDepartmentReviewsByAdmin);
 routerAPI.put("/departments/reviews/:reviewId", updateDepartmentReview);
 routerAPI.delete("/departments/reviews/:reviewId", deleteDepartmentReview);
+
+//candidate routes
+routerAPI.post("/candidate/submit-cv", submitCV);
+routerAPI.get("/admin/candidates", getAllCandidates);
+routerAPI.put("/admin/candidates/:candidateId/status", updateCandidateStatus);
 
 
 module.exports = routerAPI; //export default
