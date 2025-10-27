@@ -7,8 +7,9 @@ const {
 
 const handleSignUp = async (req, res) => {
     try {
-        const { name, email, password, address, phone, gender } = req.body;
-        const data = await handleSignUpService(name, email, password, address, phone, gender);
+        const { name, email, password, address, phone, gender, citizenId, dob } = req.body;
+        console.log(req.body);
+        const data = await handleSignUpService(name, email, password, address, phone, gender, citizenId, dob);
         return res.status(200).json(data);
     } catch (error) {
         console.error("Controller Error - handleSignUp:", error);
@@ -40,9 +41,9 @@ const getAccount = async (req, res) => {
 
 const updateProfile = async (req, res) => {
     try {
-        const { name, email, address, phone } = req.body;
+        const { name, email, address, phone, citizenId, dob, gender } = req.body;
         const staffId = req.staff._id;
-        const data = await updateProfileService(staffId, name, email, address, phone);
+        const data = await updateProfileService(staffId, name, email, address, phone, citizenId, dob, gender);
         return res.status(200).json(data);
     } catch (error) {
         console.error("Controller Error - updateProfile:", error);
