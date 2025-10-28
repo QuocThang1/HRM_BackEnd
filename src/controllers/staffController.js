@@ -7,9 +7,9 @@ const { getStaffService } = require("../services/staffService");
 const { getAccountService } = require("../services/staffService");
 
 const createStaff = async (req, res) => {
-  const { name, email, password, address, phone, gender } = req.body;
+  const { fullName, email, password, address, phone, gender } = req.body;
   const data = await createStaffService(
-    name,
+    fullName,
     email,
     password,
     address,
@@ -20,9 +20,15 @@ const createStaff = async (req, res) => {
 };
 
 const updateProfile = async (req, res) => {
-  const { name, email, address, phone } = req.body;
+  const { fullName, email, address, phone } = req.body;
   const staffId = req.staff.id; // Assuming staff ID is stored in req.staff
-  const data = await updateProfileService(staffId, name, email, address, phone);
+  const data = await updateProfileService(
+    staffId,
+    fullName,
+    email,
+    address,
+    phone,
+  );
   return res.status(200).json(data);
 };
 const handleLogin = async (req, res) => {

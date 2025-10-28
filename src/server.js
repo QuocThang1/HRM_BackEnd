@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const i18nMiddleware = require("./config/i18n");
 
 const configViewEngine = require("./config/viewEngine");
 const apiRoutes = require("./routes/api");
@@ -14,6 +15,7 @@ const port = process.env.PORT || 8080;
 app.use(cors());
 app.use(express.json()); // Parse JSON
 app.use(express.urlencoded({ extended: true })); // Parse form-data
+app.use(i18nMiddleware);
 
 // Config view engine
 configViewEngine(app);

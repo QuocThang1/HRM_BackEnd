@@ -16,10 +16,11 @@ const auth = (req, res, next) => {
       console.log("Decoded token:", decoded);
       req.staff = {
         email: decoded.email,
-        name: decoded.name,
+        fullName: decoded.fullName,
         address: decoded.address,
         phone: decoded.phone,
         _id: decoded.id,
+        role: decoded.role,
       };
       next(); // Proceed to the next middleware or route handler
     } catch (error) {

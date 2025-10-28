@@ -7,7 +7,7 @@ const staffDAO = require("../DAO/staffDAO.js");
 
 // CREATE STAFF SERVICE
 const createStaffService = async (
-  name,
+  fullName,
   email,
   password,
   address,
@@ -29,8 +29,8 @@ const createStaffService = async (
       username: email, // username = email
       password: hashedPassword,
       role: "staff", // default role
-      personal_info: {
-        full_name: name,
+      personalInfo: {
+        fullName,
         email,
         phone: phone || "",
         address: address || "",
@@ -38,8 +38,8 @@ const createStaffService = async (
       },
       // employment_info: {}
       // candidate_info: {}
-      created_at: now,
-      updated_at: now,
+      createdAt: now,
+      updatedAt: now,
     });
 
     await newStaff.save();
@@ -56,7 +56,7 @@ const createStaffService = async (
 // UPDATE PROFILE SERVICE
 const updateProfileService = async (
   staffId,
-  name,
+  fullName,
   email,
   address,
   phone,
@@ -66,11 +66,11 @@ const updateProfileService = async (
     const updatedStaff = await Staff.findByIdAndUpdate(
       staffId,
       {
-        "personal_info.full_name": name,
-        "personal_info.email": email,
-        "personal_info.address": address,
-        "personal_info.phone": phone,
-        "personal_info.gender": gender,
+        "personalInfo.fullName": fullName,
+        "personalInfo.email": email,
+        "personalInfo.address": address,
+        "personalInfo.phone": phone,
+        "personalInfo.gender": gender,
       },
       { new: true, runValidators: true }, // đảm bảo validate theo schema
     ).select("-password");
@@ -89,18 +89,19 @@ const updateProfileService = async (
 // LOGIN SERVICE
 const handleLoginService = async (email, password) => {
   try {
-    const staff = await Staff.findOne({ "personal_info.email": email });
+    const staff = await Staff.findOne({ "personalInfo.email": email });
     if (!staff) return { EC: 1, EM: "Email or Password is not correct" };
 
     const isMatch = await bcrypt.compare(password, staff.password);
     if (!isMatch) return { EC: 2, EM: "Email or Password is not correct" };
 
     const payload = {
-      email: staff.personal_info.email,
-      name: staff.personal_info.full_name,
-      address: staff.personal_info.address,
-      phone: staff.personal_info.phone,
+      email: staff.personalInfo.email,
+      fullName: staff.personalInfo.fullName,
+      address: staff.personalInfo.address,
+      phone: staff.personalInfo.phone,
       id: staff._id,
+      role: staff.role,
     };
 
     const access_token = jwt.sign(payload, process.env.JWT_SECRET, {
@@ -111,10 +112,11 @@ const handleLoginService = async (email, password) => {
       EC: 0,
       access_token,
       staff: {
-        email: staff.personal_info.email,
-        name: staff.personal_info.full_name,
-        address: staff.personal_info.address,
-        phone: staff.personal_info.phone,
+        email: staff.personalInfo.email,
+        fullName: staff.personalInfo.fullName,
+        address: staff.personalInfo.address,
+        phone: staff.personalInfo.phone,
+        role: staff.role,
       },
     };
   } catch (error) {
@@ -127,15 +129,15 @@ const handleLoginService = async (email, password) => {
 const getStaffService = async () => {
   try {
     const staffs = await Staff.find({})
-      .select("username role personal_info.full_name personal_info.email")
+      .select("username role personalInfo.fullName personalInfo.email")
       .lean();
 
-    const result = staffs.map((s) => ({
-      _id: s._id,
-      username: s.username,
-      role: s.role,
-      full_name: s.personal_info?.full_name || "",
-      email: s.personal_info?.email || "",
+    const result = staffs.map((staff) => ({
+      _id: staff._id,
+      username: staff.username,
+      role: staff.role,
+      fullName: staff.personalInfo?.fullName || "",
+      email: staff.personalInfo?.email || "",
     }));
 
     return result;
