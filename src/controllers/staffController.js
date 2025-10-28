@@ -12,7 +12,8 @@ const {
 
 const getStaff = async (req, res) => {
   try {
-    const data = await getStaffService();
+    const { role } = req.query; // Lấy role từ query params
+    const data = await getStaffService(role);
     res.json(data);
   } catch (error) {
     console.error("Controller Error - getStaff:", error);
