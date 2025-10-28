@@ -164,6 +164,15 @@ class DepartmentDAO {
             throw error;
         }
     }
+
+    async deleteDepartmentReviewsByDepartmentId(departmentId) {
+        try {
+            return await DepartmentReview.deleteMany({ departmentId });
+        } catch (error) {
+            console.error("DAO Error - deleteDepartmentReviewsByDepartmentId:", error);
+            throw error;
+        }
+    }
 }
 
 module.exports = new DepartmentDAO();

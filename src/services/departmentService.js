@@ -59,6 +59,7 @@ const deleteDepartmentService = async (id) => {
         if (!department) return { EC: 1, EM: "Department not found" };
 
         await departmentDAO.removeDepartmentFromStaffs(id);
+        await departmentDAO.deleteDepartmentReviewsByDepartmentId(id);
         await departmentDAO.deleteDepartment(id);
 
         return { EC: 0, EM: "Department deleted successfully" };

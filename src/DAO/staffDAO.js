@@ -2,9 +2,13 @@ const Staff = require("../models/staff");
 const Department = require("../models/department");
 
 class StaffDAO {
-  async getAllStaff() {
+  async getAllStaff(role) {
     try {
-      return await Staff.find().select("-password");
+      const filter = {};
+      if (role) {
+        filter.role = role;
+      }
+      return await Staff.find(filter).select("-password");
     } catch (error) {
       console.error("DAO Error - getAllStaff:", error);
       throw error;

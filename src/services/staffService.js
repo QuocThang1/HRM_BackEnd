@@ -1,9 +1,9 @@
 const bcrypt = require("bcrypt");
 const staffDAO = require("../DAO/staffDAO");
 
-const getStaffService = async () => {
+const getStaffService = async (role) => {
   try {
-    const staffs = await staffDAO.getAllStaff();
+    const staffs = await staffDAO.getAllStaff(role);
     return { EC: 0, EM: "Success", data: staffs };
   } catch (error) {
     console.error("Service Error - getStaffService:", error);
