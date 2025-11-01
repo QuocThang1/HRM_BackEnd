@@ -27,6 +27,13 @@ const { submitCV,
   getAllCandidates,
   updateCandidateStatus
 } = require("../controllers/candidateController");
+const {
+  createShiftType,
+  getAllShiftTypes,
+  getShiftType,
+  updateShiftType,
+  deleteShiftType,
+} = require("../controllers/shiftTypeController");
 const auth = require("../middleware/jwt"); // Importing delay middleware
 
 const routerAPI = express.Router();
@@ -74,6 +81,13 @@ routerAPI.delete("/departments/reviews/:reviewId", deleteDepartmentReview);
 routerAPI.post("/candidate/submit-cv", submitCV);
 routerAPI.get("/admin/candidates", getAllCandidates);
 routerAPI.put("/admin/candidates/:candidateId/status", updateCandidateStatus);
+
+//shift type routes
+routerAPI.post("/shift-types", createShiftType);
+routerAPI.get("/shift-types", getAllShiftTypes);
+routerAPI.get("/shift-types/:id", getShiftType);
+routerAPI.put("/shift-types/:id", updateShiftType);
+routerAPI.delete("/shift-types/:id", deleteShiftType);
 
 
 module.exports = routerAPI; //export default
