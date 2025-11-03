@@ -27,8 +27,8 @@ const createShiftTypeService = async (shiftData) => {
         }
 
         const timeDiff = calculateTimeDifference(shiftData.fromTime, shiftData.toTime);
-        if (timeDiff < 6) {
-            return { EC: 2, EM: "Shift duration must be at least 6 hours" };
+        if (timeDiff < 6 || timeDiff > 8) {
+            return { EC: 2, EM: "Shift duration must be at least 6 hours and at most 8 hours" };
         }
 
         const newShift = await shiftTypeDAO.createShiftType(shiftData);
@@ -77,12 +77,22 @@ const updateShiftTypeService = async (id, data) => {
             }
         }
 
-        const fromTime = data.fromTime || shiftType.fromTime;
-        const toTime = data.toTime || shiftType.toTime;
+        if (data.fromTime || data.toTime) {
+            const fromTime = data.fromTime || shiftType.fromTime;
+            const toTime = data.toTime || shiftType.toTime;
 
-        const timeDiff = calculateTimeDifference(fromTime, toTime);
-        if (timeDiff < 6) {
-            return { EC: 3, EM: "Shift duration must be at least 6 hours" };
+            const timeDiff = calculateTimeDifference(fromTime, toTime);
+            if (timeDiff < 6 || timeDiff > 8) {
+                return { EC: 3, EM: "Shift duration must be at least 6 hours and at most 8 hours" };
+            }
+
+            const shiftInUse = await shiftTypeDAO.checkShiftTypeInUse(id);
+            if (shiftInUse) {
+                return {
+                    EC: 4,
+                    EM: "Cannot update shift time. There are staff members currently scheduled for this shift",
+                };
+            }
         }
 
         const updatedShift = await shiftTypeDAO.updateShiftType(id, data);
@@ -99,6 +109,16 @@ const deleteShiftTypeService = async (id) => {
         if (!shiftType) {
             return { EC: 1, EM: "Shift type not found" };
         }
+
+        const shiftInUse = await shiftTypeDAO.checkShiftTypeInUse(id);
+        if (shiftInUse) {
+            return {
+                EC: 2,
+                EM: "Cannot delete shift type. There are staff members currently scheduled for this shift",
+            };
+        }
+
+        await shiftTypeDAO.deleteDepartmentShiftsByShiftType(id);
 
         await shiftTypeDAO.deleteShiftType(id);
         return { EC: 0, EM: "Shift type deleted successfully" };
