@@ -48,6 +48,7 @@ const {
   getShiftAssignment,
   updateShiftAssignment,
   deleteShiftAssignment,
+  getShiftAssignmentByStaffId,
 } = require("../controllers/shiftAssignmentController");
 const auth = require("../middleware/jwt"); // Importing delay middleware
 
@@ -118,5 +119,6 @@ routerAPI.get("/shift-assignments", getAllShiftAssignments);
 routerAPI.get("/shift-assignments/:id", getShiftAssignment);
 routerAPI.put("/shift-assignments/:id", updateShiftAssignment);
 routerAPI.delete("/shift-assignments/:id", deleteShiftAssignment);
+routerAPI.get("/shift-schedule", getShiftAssignmentByStaffId);
 
 module.exports = routerAPI; //export default

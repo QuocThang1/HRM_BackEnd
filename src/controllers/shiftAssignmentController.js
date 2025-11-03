@@ -4,7 +4,7 @@ const {
     getShiftAssignmentService,
     updateShiftAssignmentService,
     deleteShiftAssignmentService,
-    cancelShiftAssignmentService,
+    getShiftAssignmentByStaffIdService,
 } = require("../services/shiftAssignmentService");
 
 const createShiftAssignment = async (req, res) => {
@@ -46,6 +46,17 @@ const getShiftAssignment = async (req, res) => {
     }
 };
 
+const getShiftAssignmentByStaffId = async (req, res) => {
+    try {
+        const staffId = req.staff._id; // Lấy từ middleware
+        const data = await getShiftAssignmentByStaffIdService(staffId);
+        res.json(data);
+    } catch (error) {
+        console.error("Controller Error - getShiftAssignmentByStaffId:", error);
+        res.json({ EC: -1, EM: "Internal Server Error" });
+    }
+};
+
 const updateShiftAssignment = async (req, res) => {
     try {
         const { id } = req.params;
@@ -69,16 +80,6 @@ const deleteShiftAssignment = async (req, res) => {
     }
 };
 
-const cancelShiftAssignment = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const data = await cancelShiftAssignmentService(id);
-        res.json(data);
-    } catch (error) {
-        console.error("Controller Error - cancelShiftAssignment:", error);
-        res.json({ EC: -1, EM: "Internal Server Error" });
-    }
-};
 
 module.exports = {
     createShiftAssignment,
@@ -86,5 +87,5 @@ module.exports = {
     getShiftAssignment,
     updateShiftAssignment,
     deleteShiftAssignment,
-    cancelShiftAssignment,
+    getShiftAssignmentByStaffId,
 };
