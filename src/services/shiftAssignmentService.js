@@ -108,6 +108,16 @@ const getShiftAssignmentService = async (id) => {
     }
 };
 
+const getShiftAssignmentByStaffIdService = async (staffId) => {
+    try {
+        const assignments = await shiftAssignmentDAO.getShiftAssignmentsByStaff(staffId);
+        return { EC: 0, EM: "Success", data: assignments };
+    } catch (error) {
+        console.error("Service Error - getShiftAssignmentByStaffIdService:", error);
+        return { EC: -1, EM: "Error fetching shift assignments for staff" };
+    }
+};
+
 const updateShiftAssignmentService = async (id, updateData) => {
     try {
         const assignment = await shiftAssignmentDAO.getShiftAssignmentById(id);
@@ -176,4 +186,5 @@ module.exports = {
     getShiftAssignmentService,
     updateShiftAssignmentService,
     deleteShiftAssignmentService,
+    getShiftAssignmentByStaffIdService,
 };
