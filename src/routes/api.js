@@ -22,7 +22,8 @@ const { createDepartment,
   getDepartmentReviews,
   getDepartmentReviewsByAdmin,
   updateDepartmentReview,
-  deleteDepartmentReview } = require("../controllers/departmentController");
+  deleteDepartmentReview,
+  getDepartmentByManager } = require("../controllers/departmentController");
 const { submitCV,
   getAllCandidates,
   updateCandidateStatus
@@ -34,6 +35,20 @@ const {
   updateShiftType,
   deleteShiftType,
 } = require("../controllers/shiftTypeController");
+const {
+  addShiftToDepartment,
+  getDepartmentShifts,
+  deleteDepartmentShift,
+  updateDepartmentShiftStatus,
+  getAvailableShiftsForDepartment
+} = require("../controllers/departmentShiftController");
+const {
+  createShiftAssignment,
+  getAllShiftAssignments,
+  getShiftAssignment,
+  updateShiftAssignment,
+  deleteShiftAssignment,
+} = require("../controllers/shiftAssignmentController");
 const auth = require("../middleware/jwt"); // Importing delay middleware
 
 const routerAPI = express.Router();
@@ -65,6 +80,7 @@ routerAPI.put("/staff/remove-from-department", removeStaffFromDepartment);
 //department routes
 routerAPI.post("/departments", createDepartment);
 routerAPI.get("/departments", getDepartments);
+routerAPI.get("/departments/manager-department", getDepartmentByManager);
 routerAPI.get("/departments/:id", getDepartment);
 routerAPI.put("/departments/:id", updateDepartment);
 routerAPI.delete("/departments/:id", deleteDepartment);
@@ -89,5 +105,18 @@ routerAPI.get("/shift-types/:id", getShiftType);
 routerAPI.put("/shift-types/:id", updateShiftType);
 routerAPI.delete("/shift-types/:id", deleteShiftType);
 
+//department shift routes
+routerAPI.post("/department-shifts", addShiftToDepartment);
+routerAPI.get("/department-shifts", getDepartmentShifts);
+routerAPI.delete("/department-shifts/:id", deleteDepartmentShift);
+routerAPI.put("/department-shifts/:id/status", updateDepartmentShiftStatus);
+routerAPI.get("/department-shifts/available/:departmentId", getAvailableShiftsForDepartment);
+
+//shift assignment routes
+routerAPI.post("/shift-assignments", createShiftAssignment);
+routerAPI.get("/shift-assignments", getAllShiftAssignments);
+routerAPI.get("/shift-assignments/:id", getShiftAssignment);
+routerAPI.put("/shift-assignments/:id", updateShiftAssignment);
+routerAPI.delete("/shift-assignments/:id", deleteShiftAssignment);
 
 module.exports = routerAPI; //export default
