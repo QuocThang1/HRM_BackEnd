@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const staffDAO = require("../DAO/staffDAO");
+const shiftAssignmentDAO = require("../DAO/shiftAssignmentDAO");
 
 const getStaffService = async (role) => {
   try {
@@ -96,6 +97,13 @@ const getStaffNotInDepartmentService = async (departmentId) => {
 
 const removeStaffFromDepartmentService = async (staffId) => {
   try {
+    const hasActiveShifts = await shiftAssignmentDAO.checkStaffHasActiveShifts(staffId);
+    if (hasActiveShifts) {
+      return {
+        EC: 1,
+        EM: "Cannot remove staff from department. Staff has active shift assignments (scheduled or completed)",
+      };
+    }
     const updatedStaff = await staffDAO.removeStaffFromDepartment(staffId);
     return { EC: 0, EM: "Staff removed from department successfully", data: updatedStaff };
   } catch (error) {

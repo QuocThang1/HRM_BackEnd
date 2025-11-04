@@ -50,6 +50,14 @@ const {
   deleteShiftAssignment,
   getShiftAssignmentByStaffId,
 } = require("../controllers/shiftAssignmentController");
+const {
+  checkIn,
+  checkOut,
+  getMyAttendances,
+  getAttendancesByDepartment,
+  getAllAttendances,
+  getTodayAttendance,
+} = require("../controllers/attendanceController");
 const auth = require("../middleware/jwt"); // Importing delay middleware
 
 const routerAPI = express.Router();
@@ -121,4 +129,11 @@ routerAPI.put("/shift-assignments/:id", updateShiftAssignment);
 routerAPI.delete("/shift-assignments/:id", deleteShiftAssignment);
 routerAPI.get("/shift-schedule", getShiftAssignmentByStaffId);
 
+//attendance routes
+routerAPI.post("/attendances/check-in", checkIn);
+routerAPI.post("/attendances/check-out", checkOut);
+routerAPI.get("/attendances/today", getTodayAttendance);
+routerAPI.get("/attendances/my-attendances", getMyAttendances);
+routerAPI.get("/attendances/department/:departmentId", getAttendancesByDepartment);
+routerAPI.get("/attendances", getAllAttendances); // Admin xem tất cả
 module.exports = routerAPI; //export default
