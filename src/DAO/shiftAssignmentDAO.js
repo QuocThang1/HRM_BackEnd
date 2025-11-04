@@ -120,6 +120,18 @@ class ShiftAssignmentDAO {
             throw error;
         }
     }
+
+    async checkStaffHasActiveShifts(staffId) {
+        try {
+            return await ShiftAssignment.findOne({
+                staff: staffId,
+                status: { $in: ["scheduled", "completed"] },
+            });
+        } catch (error) {
+            console.error("DAO Error - checkStaffHasActiveShifts:", error);
+            throw error;
+        }
+    }
 }
 
 module.exports = new ShiftAssignmentDAO();

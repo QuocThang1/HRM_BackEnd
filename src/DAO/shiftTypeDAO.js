@@ -1,5 +1,6 @@
 const ShiftType = require("../models/shiftType");
 const DepartmentShift = require("../models/departmentShift");
+const ShiftAssignment = require("../models/shiftAssignment");
 
 class ShiftTypeDAO {
     async createShiftType(data) {
@@ -64,11 +65,9 @@ class ShiftTypeDAO {
 
     async checkShiftTypeInUse(shiftTypeId) {
         try {
-            const ShiftAssignment = require("../models/shiftAssignment");
-            // Kiểm tra có shift assignment nào đang scheduled không
             return await ShiftAssignment.findOne({
                 shiftType: shiftTypeId,
-                status: "scheduled",
+                status: { $in: ["scheduled", "completed"] },
             });
         } catch (error) {
             console.error("DAO Error - checkShiftTypeInUse:", error);
