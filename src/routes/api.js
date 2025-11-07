@@ -58,6 +58,14 @@ const {
   getAllAttendances,
   getTodayAttendance,
 } = require("../controllers/attendanceController");
+const {
+  submitResignation,
+  getMyResignations,
+  getResignationsByApprover,
+  getAllResignations,
+  updateResignationStatus,
+  deleteResignation,
+} = require("../controllers/resignationController");
 const auth = require("../middleware/jwt"); // Importing delay middleware
 
 const routerAPI = express.Router();
@@ -135,5 +143,14 @@ routerAPI.post("/attendances/check-out", checkOut);
 routerAPI.get("/attendances/today", getTodayAttendance);
 routerAPI.get("/attendances/my-attendances", getMyAttendances);
 routerAPI.get("/attendances/department/:departmentId", getAttendancesByDepartment);
-routerAPI.get("/attendances", getAllAttendances); // Admin xem tất cả
+routerAPI.get("/attendances", getAllAttendances);
+
+//resignation routes
+routerAPI.post("/resignations", submitResignation);
+routerAPI.get("/resignations/my-resignations", getMyResignations);
+routerAPI.get("/resignations/approver", getResignationsByApprover);
+routerAPI.get("/resignations", getAllResignations);
+routerAPI.put("/resignations/:id/status", updateResignationStatus);
+routerAPI.delete("/resignations/:id", deleteResignation);
+
 module.exports = routerAPI; //export default
