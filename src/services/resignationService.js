@@ -121,7 +121,7 @@ const updateResignationStatusService = async (
         // Nếu chuyển sang approved, xóa staff khỏi hệ thống
         if (status === "approved") {
             // Xóa staff
-            await staffDAO.deleteStaff(resignation.staffId._id);
+            await staffDAO.deleteStaffByID(resignation.staffId._id);
 
             // Cập nhật status
             const updatedResignation = await resignationDAO.updateResignationStatus(
@@ -155,24 +155,58 @@ const updateResignationStatusService = async (
     }
 };
 
-const deleteResignationService = async (id, staffId) => {
+const deleteResignationService = async (id, currentUserId) => {
     try {
         const resignation = await resignationDAO.getResignationById(id);
         if (!resignation) {
             return { EC: 1, EM: "Resignation not found" };
         }
 
-        // Chỉ cho phép xóa nếu là người tạo và status là pending hoặc rejected
-        if (resignation.staffId._id.toString() !== staffId) {
-            return { EC: 2, EM: "You can only delete your own resignation" };
+        const staffId = resignation.staffId?._id?.toString() || null;
+        const isStaffOwner = staffId && staffId === currentUserId;
+        const isApprover = resignation.approvedBy._id.toString() === currentUserId;
+
+        if (!isStaffOwner && !isApprover) {
+            return {
+                EC: 2,
+                EM: "You are not authorized to delete this resignation"
+            };
         }
 
-        if (resignation.status === "approved") {
-            return { EC: 3, EM: "Cannot delete an approved resignation" };
+        if (isStaffOwner) {
+            if (resignation.status === "pending" || resignation.status === "rejected") {
+                await resignationDAO.deleteResignation(id);
+                return {
+                    EC: 0,
+                    EM: "Resignation deleted successfully"
+                };
+            } else {
+                return {
+                    EC: 3,
+                    EM: "You can only delete resignations with pending or rejected status"
+                };
+            }
         }
 
-        await resignationDAO.deleteResignation(id);
-        return { EC: 0, EM: "Resignation deleted successfully" };
+        if (isApprover) {
+            if (resignation.status === "rejected" || resignation.status === "approved") {
+                await resignationDAO.deleteResignation(id);
+                return {
+                    EC: 0,
+                    EM: "Resignation deleted successfully"
+                };
+            } else {
+                return {
+                    EC: 4,
+                    EM: "Admin can only delete resignations with rejected or approved status"
+                };
+            }
+        }
+
+        return {
+            EC: 5,
+            EM: "Unable to delete resignation"
+        };
     } catch (error) {
         console.error("Service Error - deleteResignationService:", error);
         return { EC: -1, EM: "Error deleting resignation" };
