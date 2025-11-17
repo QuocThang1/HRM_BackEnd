@@ -3,7 +3,7 @@ const { Router } = require("express");
 const jwt = require("jsonwebtoken");
 
 const auth = (req, res, next) => {
-  const while_list = ["/", "/register", "/login"];
+  const while_list = ["/v1/api/account/register", "/v1/api/account/login"];
 
   if (while_list.includes(req.path)) {
     return next(); // Skip authentication for whitelisted routes

@@ -3,7 +3,17 @@ const express = require("express");
 const cors = require("cors");
 
 const configViewEngine = require("./config/viewEngine");
-const apiRoutes = require("./routes/api");
+const accountRoutes = require("./routes/accountRoutes");
+const staffRoutes = require("./routes/staffRoutes");
+const departmentRoutes = require("./routes/departmentRoutes");
+const departmentReviewRoutes = require("./routes/departmentReviewRoutes");
+const candidateRoutes = require("./routes/candidateRoutes");
+const departmentShiftRoutes = require("./routes/departmentShiftRoutes");
+const shiftTypeRoutes = require("./routes/shiftTypeRoutes");
+const shiftAssignmentRoutes = require("./routes/shiftAssignmentRoutes");
+const attendanceRoutes = require("./routes/attendanceRoutes");
+const resignationRoutes = require("./routes/resignationRoutes");
+const auth = require("./middleware/auth");
 const connection = require("./config/database");
 
 const app = express();
@@ -17,11 +27,19 @@ app.use(express.urlencoded({ extended: true })); // Parse form-data
 // Config view engine
 configViewEngine(app);
 
-// Routes
-const webAPI = express.Router();
+app.use(auth);
 
-app.use("/", webAPI);
-app.use("/v1/api", apiRoutes); // bỏ / cuối cho chuẩn
+// Routes
+app.use("/v1/api/account", accountRoutes);
+app.use("/v1/api/staff", staffRoutes);
+app.use("/v1/api/departments", departmentRoutes);
+app.use("/v1/api/department-reviews", departmentReviewRoutes);
+app.use("/v1/api/candidates", candidateRoutes);
+app.use("/v1/api/department-shifts", departmentShiftRoutes);
+app.use("/v1/api/shift-types", shiftTypeRoutes);
+app.use("/v1/api/shift-assignments", shiftAssignmentRoutes);
+app.use("/v1/api/attendances", attendanceRoutes);
+app.use("/v1/api/resignations", resignationRoutes);
 
 // Start server
 (async () => {
