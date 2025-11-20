@@ -13,6 +13,8 @@ const shiftTypeRoutes = require("./routes/shiftTypeRoutes");
 const shiftAssignmentRoutes = require("./routes/shiftAssignmentRoutes");
 const attendanceRoutes = require("./routes/attendanceRoutes");
 const resignationRoutes = require("./routes/resignationRoutes");
+const salaryRoutes = require("./routes/salaryRoutes");
+const monthlySalaryRoutes = require("./routes/monthlySalaryRoutes");
 const auth = require("./middleware/auth");
 const connection = require("./config/database");
 
@@ -40,6 +42,8 @@ app.use("/v1/api/shift-types", shiftTypeRoutes);
 app.use("/v1/api/shift-assignments", shiftAssignmentRoutes);
 app.use("/v1/api/attendances", attendanceRoutes);
 app.use("/v1/api/resignations", resignationRoutes);
+app.use("/v1/api/salaries", salaryRoutes);
+app.use("/v1/api/monthly-salaries", monthlySalaryRoutes);
 
 // Start server
 (async () => {

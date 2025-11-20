@@ -17,6 +17,6 @@ routerAPI.post("/check-out", checkRole("staff"), checkOut);
 routerAPI.get("/today", checkRole("staff"), getTodayAttendance);
 routerAPI.get("/", checkRole("manager"), getAllAttendances);
 routerAPI.get("/my-attendances", checkRole("staff"), getMyAttendances);
-routerAPI.get("/department/:departmentId", checkRole("manager"), getAttendancesByDepartment);
+routerAPI.get("/department/:departmentId", checkRole("admin", "manager"), getAttendancesByDepartment);
 
 module.exports = routerAPI;
