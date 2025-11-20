@@ -151,6 +151,22 @@ class AttendanceDAO {
             throw error;
         }
     }
+
+    async getAttendancesByStaffAndDateRange(staffId, startDate, endDate) {
+        try {
+            return await Attendance.find({
+                staffId,
+                checkIn: {
+                    $gte: startDate,
+                    $lte: endDate,
+                },
+                workingHours: { $exists: true, $ne: null },
+            });
+        } catch (error) {
+            console.error("DAO Error - getAttendancesByStaffAndDateRange:", error);
+            throw error;
+        }
+    }
 }
 
 module.exports = new AttendanceDAO();
