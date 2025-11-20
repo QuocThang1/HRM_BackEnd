@@ -1,5 +1,6 @@
 const express = require("express");
-const { getStaff,
+const {
+  getStaff,
   addNewStaff,
   getOneStaff,
   updateStaff,
@@ -7,12 +8,18 @@ const { getStaff,
   getStaffByDepartment,
   assignStaffToDepartment,
   getStaffNotInDepartment,
-  removeStaffFromDepartment } = require("../controllers/staffController");
-const { handleSignUp,
+  removeStaffFromDepartment,
+} = require("../controllers/staffController");
+const {
+  handleSignUp,
   handleLogin,
   getAccount,
-  updateProfile, } = require("../controllers/accountController");
-const { createDepartment,
+  updateProfile,
+  handleForgotPassword,
+  handleResetPassword,
+} = require("../controllers/accountController");
+const {
+  createDepartment,
   getDepartments,
   getDepartment,
   updateDepartment,
@@ -22,10 +29,12 @@ const { createDepartment,
   getDepartmentReviews,
   getDepartmentReviewsByAdmin,
   updateDepartmentReview,
-  deleteDepartmentReview } = require("../controllers/departmentController");
-const { submitCV,
+  deleteDepartmentReview,
+} = require("../controllers/departmentController");
+const {
+  submitCV,
   getAllCandidates,
-  updateCandidateStatus
+  updateCandidateStatus,
 } = require("../controllers/candidateController");
 const auth = require("../middleware/jwt"); // Importing delay middleware
 
@@ -40,6 +49,8 @@ routerAPI.get("/", (req, res) => {
 //account routes
 routerAPI.post("/register", handleSignUp);
 routerAPI.post("/login", handleLogin); // Assuming you have a handleLogin function
+routerAPI.post("/forgot-password", handleForgotPassword);
+routerAPI.post("/reset-password", handleResetPassword);
 routerAPI.get("/staff", getStaff); // Example route for getting staff data
 routerAPI.get("/account", getAccount); // Example route for getting account data
 routerAPI.put("/profile", updateProfile); // Example route for updating profile
@@ -51,9 +62,11 @@ routerAPI.put("/:id", updateStaff);
 routerAPI.get("/detail-employee/:id", getOneStaff);
 routerAPI.get("/staff/departments/:departmentId/", getStaffByDepartment);
 routerAPI.put("/staff/assign-department", assignStaffToDepartment);
-routerAPI.get("/staff/not-in-department/:departmentId", getStaffNotInDepartment);
+routerAPI.get(
+  "/staff/not-in-department/:departmentId",
+  getStaffNotInDepartment,
+);
 routerAPI.put("/staff/remove-from-department", removeStaffFromDepartment);
-
 
 //department routes
 routerAPI.post("/departments", createDepartment);
@@ -74,6 +87,5 @@ routerAPI.delete("/departments/reviews/:reviewId", deleteDepartmentReview);
 routerAPI.post("/candidate/submit-cv", submitCV);
 routerAPI.get("/admin/candidates", getAllCandidates);
 routerAPI.put("/admin/candidates/:candidateId/status", updateCandidateStatus);
-
 
 module.exports = routerAPI; //export default

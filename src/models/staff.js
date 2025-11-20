@@ -39,11 +39,20 @@ const staffSchema = new mongoose.Schema(
         enum: ["pending", "approved", "rejected", null],
       },
     },
+    // Password reset token fields
+    resetPasswordToken: {
+      type: String,
+      default: null,
+    },
+    resetPasswordExpires: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,
     collection: "tblstaff",
-  }
+  },
 );
 
 module.exports = mongoose.model("Staff", staffSchema);

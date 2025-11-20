@@ -1,9 +1,14 @@
 require("dotenv").config();
-const { Router } = require("express");
 const jwt = require("jsonwebtoken");
 
 const auth = (req, res, next) => {
-  const while_list = ["/", "/register", "/login"];
+  const while_list = [
+    "/",
+    "/register",
+    "/login",
+    "/forgot-password",
+    "/reset-password",
+  ];
 
   if (while_list.includes(req.path)) {
     return next(); // Skip authentication for whitelisted routes

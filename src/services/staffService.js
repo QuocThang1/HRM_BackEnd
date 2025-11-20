@@ -11,7 +11,16 @@ const getStaffService = async (role) => {
   }
 };
 
-const addNewStaffService = async ({ password, fullName, email, phone, address, citizenId, gender, dob }) => {
+const addNewStaffService = async ({
+  password,
+  fullName,
+  email,
+  phone,
+  address,
+  citizenId,
+  gender,
+  dob,
+}) => {
   try {
     const existing = await staffDAO.findByEmail(email);
     if (existing) return { EC: 1, EM: "Email already exists" };
@@ -76,8 +85,15 @@ const getStaffByDepartmentService = async (departmentId) => {
 
 const assignStaffToDepartmentService = async (staffId, departmentId) => {
   try {
-    const updatedStaff = await staffDAO.assignStaffToDepartment(staffId, departmentId);
-    return { EC: 0, EM: "Staff assigned to department successfully", data: updatedStaff };
+    const updatedStaff = await staffDAO.assignStaffToDepartment(
+      staffId,
+      departmentId,
+    );
+    return {
+      EC: 0,
+      EM: "Staff assigned to department successfully",
+      data: updatedStaff,
+    };
   } catch (error) {
     console.error("Service Error - assignStaffToDepartmentService:", error);
     return { EC: -1, EM: "Error assigning staff to department" };
@@ -97,7 +113,11 @@ const getStaffNotInDepartmentService = async (departmentId) => {
 const removeStaffFromDepartmentService = async (staffId) => {
   try {
     const updatedStaff = await staffDAO.removeStaffFromDepartment(staffId);
-    return { EC: 0, EM: "Staff removed from department successfully", data: updatedStaff };
+    return {
+      EC: 0,
+      EM: "Staff removed from department successfully",
+      data: updatedStaff,
+    };
   } catch (error) {
     console.error("Service Error - removeStaffFromDepartmentService:", error);
     return { EC: -1, EM: "Error removing staff from department" };
