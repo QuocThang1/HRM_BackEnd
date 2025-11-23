@@ -15,6 +15,8 @@ const attendanceRoutes = require("./routes/attendanceRoutes");
 const resignationRoutes = require("./routes/resignationRoutes");
 const salaryRoutes = require("./routes/salaryRoutes");
 const monthlySalaryRoutes = require("./routes/monthlySalaryRoutes");
+const chatbotRoutes = require("./routes/chatbotRoutes");
+const policyRoutes = require("./routes/policyRoutes");
 const auth = require("./middleware/auth");
 const connection = require("./config/database");
 
@@ -28,6 +30,8 @@ app.use(express.urlencoded({ extended: true })); // Parse form-data
 
 // Config view engine
 configViewEngine(app);
+
+app.use("/v1/api/chatbot", chatbotRoutes);
 
 app.use(auth);
 
@@ -44,6 +48,7 @@ app.use("/v1/api/attendances", attendanceRoutes);
 app.use("/v1/api/resignations", resignationRoutes);
 app.use("/v1/api/salaries", salaryRoutes);
 app.use("/v1/api/monthly-salaries", monthlySalaryRoutes);
+app.use("/v1/api/policies", policyRoutes);
 
 // Start server
 (async () => {

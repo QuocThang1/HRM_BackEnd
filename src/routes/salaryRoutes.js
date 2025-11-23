@@ -15,7 +15,7 @@ const routerAPI = express.Router();
 
 routerAPI.post("/", checkRole("admin"), createSalary);
 routerAPI.get("/", checkRole("admin"), getAllSalaries);
-routerAPI.get("/my-salary", checkRole("staff"), getMySalary);
+routerAPI.get("/my-salary", checkRole("staff", "manager"), getMySalary);
 routerAPI.get("/staff/:staffId", checkRole("admin"), getSalaryByStaff);
 routerAPI.get("/:id", checkRole("admin"), getSalary);
 routerAPI.put("/:id", checkRole("admin"), updateSalary);
