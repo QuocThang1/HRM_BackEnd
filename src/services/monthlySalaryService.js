@@ -49,12 +49,16 @@ const createMonthlySalaryService = async (data, createdBy) => {
             return { EC: 3, EM: "No hourly rate found for this staff" };
         }
 
-        const totalHoursWorked = await calculateTotalHoursWorkedService(
-            staffId,
-            month,
-            year
-        );
-
+        let totalHoursWorked;
+        if (staff.role === "manager") {
+            totalHoursWorked = 160;
+        } else {
+            totalHoursWorked = await calculateTotalHoursWorkedService(
+                staffId,
+                month,
+                year
+            );
+        }
         const monthlySalary = await monthlySalaryDAO.createMonthlySalary({
             staffId,
             month,
