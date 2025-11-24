@@ -62,9 +62,17 @@ class StaffDAO {
 
   async setResetTokenByEmail(email, token, expires) {
     try {
+      const update = { resetPasswordToken: token };
+      if (expires === null) {
+        update.resetPasswordExpires = null;
+      } else if (expires !== undefined) {
+        // ensure expires is stored as Date
+        update.resetPasswordExpires =
+          expires instanceof Date ? expires : new Date(expires);
+      }
       return await Staff.findOneAndUpdate(
         { "personalInfo.email": email },
-        { resetPasswordToken: token, resetPasswordExpires: expires },
+        update,
         { new: true },
       );
     } catch (error) {
@@ -77,7 +85,7 @@ class StaffDAO {
     try {
       return await Staff.findOne({
         resetPasswordToken: token,
-        resetPasswordExpires: { $gt: Date.now() },
+        resetPasswordExpires: { $gt: new Date() },
       });
     } catch (error) {
       console.error("DAO Error - findByResetToken:", error);

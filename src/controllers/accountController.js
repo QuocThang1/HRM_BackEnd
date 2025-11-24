@@ -88,11 +88,27 @@ const handleForgotPassword = async (req, res) => {
 
 const handleResetPassword = async (req, res) => {
   try {
-    const { token, newPassword } = req.body;
-    const data = await resetPasswordService(token, newPassword);
+    const { email, otp, newPassword } = req.body;
+    const data = await resetPasswordService(email, otp, newPassword);
     return res.status(200).json(data);
   } catch (error) {
     console.error("Controller Error - handleResetPassword:", error);
+    return res.status(500).json({ EC: -1, EM: "Internal Server Error" });
+  }
+};
+
+const handleVerifyOtp = async (req, res) => {
+  try {
+    // accept either 'code' or 'otp' from client
+    const { email, code, otp } = req.body;
+    const codeToUse = otp || code;
+    const data = await require("../services/accountService").verifyOtpService(
+      email,
+      codeToUse,
+    );
+    return res.status(200).json(data);
+  } catch (error) {
+    console.error("Controller Error - handleVerifyOtp:", error);
     return res.status(500).json({ EC: -1, EM: "Internal Server Error" });
   }
 };
@@ -104,4 +120,5 @@ module.exports = {
   updateProfile,
   handleForgotPassword,
   handleResetPassword,
+  handleVerifyOtp,
 };

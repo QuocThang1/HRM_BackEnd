@@ -18,6 +18,7 @@ const {
   handleForgotPassword,
   handleResetPassword,
 } = require("../controllers/accountController");
+const { handleVerifyOtp } = require("../controllers/accountController");
 const {
   createDepartment,
   getDepartments,
@@ -51,6 +52,7 @@ routerAPI.post("/register", handleSignUp);
 routerAPI.post("/login", handleLogin); // Assuming you have a handleLogin function
 routerAPI.post("/forgot-password", handleForgotPassword);
 routerAPI.post("/reset-password", handleResetPassword);
+routerAPI.post("/verify-otp", handleVerifyOtp);
 routerAPI.get("/staff", getStaff); // Example route for getting staff data
 routerAPI.get("/account", getAccount); // Example route for getting account data
 routerAPI.put("/profile", updateProfile); // Example route for updating profile
