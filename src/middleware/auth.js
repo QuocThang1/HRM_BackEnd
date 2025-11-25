@@ -2,21 +2,9 @@ require("dotenv").config();
 const jwt = require("jsonwebtoken");
 
 const auth = (req, res, next) => {
-  const while_list = [
-    "/v1/api/account/register",
-    "/v1/api/account/login",
-    "/v1/api/account/forgot-password",
-    "/v1/api/account/verify-otp",
-    "/v1/api/account/reset-password",
-    "/v1/api/auth/google",
-    "/v1/api/auth/google/callback",
-    "/v1/api/auth/microsoft",
-    "/v1/api/auth/microsoft/callback",
-  ];
+  const while_list = ["/v1/api/account/register", "/v1/api/account/login"];
 
-  // Check full path using req.originalUrl (includes query string, but we only care about path)
-  const fullPath = req.originalUrl.split("?")[0]; // Remove query string
-  if (while_list.includes(fullPath)) {
+  if (while_list.includes(req.path)) {
     return next(); // Skip authentication for whitelisted routes
   }
 

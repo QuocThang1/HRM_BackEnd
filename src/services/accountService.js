@@ -1,7 +1,6 @@
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { Buffer } = require("buffer");
 const staffDAO = require("../DAO/staffDAO");
 
 const saltRounds = 10;
@@ -60,8 +59,7 @@ const handleLoginService = async (email, password) => {
     const payload = {
       id: staff._id,
       email: staff.personalInfo.email,
-      // Ensure name is encoded as UTF-8 string
-      name: Buffer.from(staff.personalInfo.fullName, "utf8").toString(),
+      name: staff.personalInfo.fullName,
       address: staff.personalInfo.address,
       phone: staff.personalInfo.phone,
       role: staff.role,
@@ -69,8 +67,6 @@ const handleLoginService = async (email, password) => {
 
     const access_token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRES_IN,
-      // Add encoding option if supported
-      // encoding: 'utf8',
     });
 
     return {
@@ -202,7 +198,6 @@ const requestPasswordResetService = async (email) => {
       </div>
     `;
 
-    let mailSent = false;
     try {
       await mailer.sendMail({
         to: staff.personalInfo.email,
@@ -210,12 +205,9 @@ const requestPasswordResetService = async (email) => {
         text,
         html,
       });
-      mailSent = true;
     } catch (mailErr) {
       console.error("Error sending OTP email:", mailErr);
-    }
-    if (!mailSent) {
-      console.warn(`DEV Fallback: OTP for ${email} is ${otp}`);
+      // tiếp tục mà không throw
     }
 
     return {

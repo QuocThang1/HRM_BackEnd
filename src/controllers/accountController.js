@@ -5,7 +5,6 @@ const {
   updateProfileService,
   requestPasswordResetService,
   resetPasswordService,
-  verifyOtpService,
 } = require("../services/accountService");
 
 const handleSignUp = async (req, res) => {
@@ -43,11 +42,6 @@ const handleLogin = async (req, res) => {
 
 const getAccount = async (req, res) => {
   try {
-    if (!req.staff || !req.staff._id) {
-      return res
-        .status(401)
-        .json({ EC: -1, EM: "Unauthorized: staff not found" });
-    }
     const staffId = req.staff._id;
     const data = await getAccountService(staffId);
     return res.status(200).json(data);
@@ -80,8 +74,6 @@ const updateProfile = async (req, res) => {
 
 const handleForgotPassword = async (req, res) => {
   try {
-    // Debug: log full body to ensure frontend payload is received
-    console.log(">>> CONTROLLER HIT body:", JSON.stringify(req.body));
     const { email, frontendUrl } = req.body;
     const data = await requestPasswordResetService(
       email,

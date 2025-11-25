@@ -41,15 +41,6 @@ const staffSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
-    // OAuth provider IDs
-    googleId: {
-      type: String,
-      default: null,
-    },
-    microsoftId: {
-      type: String,
-      default: null,
-    },
   },
   {
     timestamps: true,

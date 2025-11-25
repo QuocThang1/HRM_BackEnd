@@ -1,15 +1,15 @@
 const express = require("express");
 const {
-  createContract,
-  getAllContracts,
-  getContract,
-  getContractByStaffId,
-  getContractsByStatus,
-  updateContract,
-  updateContractStatus,
-  deleteContract,
-  getExpiringContracts,
-  getMyContract,
+    createContract,
+    getAllContracts,
+    getContract,
+    getContractByStaffId,
+    getContractsByStatus,
+    updateContract,
+    updateContractStatus,
+    deleteContract,
+    getExpiringContracts,
+    getMyContract,
 } = require("../controllers/contractController");
 
 const checkRole = require("../middleware/checkRole");
