@@ -25,6 +25,13 @@ const staffSchema = new mongoose.Schema(
         enum: ["male", "female", "other"],
       },
     },
+    employmentInfo: {
+      position: String,
+      contractId: mongoose.Schema.Types.ObjectId,
+      salary: Number,
+      allowance: Number,
+      penalties: Number,
+    },
     candidateInfo: {
       cvUrl: String,
       status: {
@@ -39,6 +46,15 @@ const staffSchema = new mongoose.Schema(
     },
     resetPasswordExpires: {
       type: Date,
+      default: null,
+    },
+    // OAuth provider IDs
+    googleId: {
+      type: String,
+      default: null,
+    },
+    microsoftId: {
+      type: String,
       default: null,
     },
   },
