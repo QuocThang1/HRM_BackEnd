@@ -17,6 +17,9 @@ const salaryRoutes = require("./routes/salaryRoutes");
 const monthlySalaryRoutes = require("./routes/monthlySalaryRoutes");
 const chatbotRoutes = require("./routes/chatbotRoutes");
 const policyRoutes = require("./routes/policyRoutes");
+const contractRoutes = require("./routes/contractRoutes");
+
+const { startAutoExpireJob } = require("./auto/autoExpireContracts");
 const auth = require("./middleware/auth");
 const connection = require("./config/database");
 
@@ -49,11 +52,14 @@ app.use("/v1/api/resignations", resignationRoutes);
 app.use("/v1/api/salaries", salaryRoutes);
 app.use("/v1/api/monthly-salaries", monthlySalaryRoutes);
 app.use("/v1/api/policies", policyRoutes);
+app.use("/v1/api/contracts", contractRoutes);
 
 // Start server
 (async () => {
   try {
     await connection(); // Kết nối MongoDB
+
+    startAutoExpireJob();
 
     app.listen(port, () => {
       console.log(`Backend Node.js App listening on port ${port}`);
