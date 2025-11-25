@@ -8,9 +8,9 @@ class StaffDAO {
       if (role) {
         filter.role = role;
       }
-      return await Staff.find(filter).select("-password").
-        populate("departmentId", "departmentName");
-
+      return await Staff.find(filter)
+        .select("-password")
+        .populate("departmentId", "departmentName");
     } catch (error) {
       console.error("DAO Error - getAllStaff:", error);
       throw error;
@@ -19,8 +19,9 @@ class StaffDAO {
 
   async getStaffByID(staffId) {
     try {
-      return await Staff.findById(staffId).select("-password").
-        populate("departmentId", "departmentName");
+      return await Staff.findById(staffId)
+        .select("-password")
+        .populate("departmentId", "departmentName");
     } catch (error) {
       console.error("DAO Error - getStaffByID:", error);
       throw error;
@@ -118,12 +119,26 @@ class StaffDAO {
       const staff = new Staff(data);
       return await staff.save();
     } catch (error) {
-      console.error("DAO Error - createStaff:", error);
-      if (error.errInfo && error.errInfo.details) {
+      console.error("DAO Error - createStaff:", error.message);
+      // Log full error object to help diagnose MongoDB validation failures
+      try {
         console.error(
-          "Validation details:",
-          JSON.stringify(error.errInfo.details, null, 2),
+          "Full error:",
+          JSON.stringify(error, Object.getOwnPropertyNames(error), 2),
         );
+      } catch (jsonErr) {
+        console.error("Could not stringify error object:", jsonErr);
+        console.error(error);
+      }
+      if (error.errInfo) {
+        try {
+          console.error(
+            "Validation details:",
+            JSON.stringify(error.errInfo, null, 2),
+          );
+        } catch (e) {
+          console.error("Could not stringify errInfo:", e, error.errInfo);
+        }
       }
       throw error;
     }
