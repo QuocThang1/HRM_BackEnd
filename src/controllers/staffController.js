@@ -7,7 +7,7 @@ const {
   getStaffByDepartmentService,
   assignStaffToDepartmentService,
   getStaffNotInDepartmentService,
-  removeStaffFromDepartmentService
+  removeStaffFromDepartmentService,
 } = require("../services/staffService");
 
 const getStaff = async (req, res) => {
@@ -23,8 +23,26 @@ const getStaff = async (req, res) => {
 
 const addNewStaff = async (req, res) => {
   try {
-    const { password, fullName, email, phone, address, citizenId, gender, dob } = req.body;
-    const data = await addNewStaffService({ password, fullName, email, phone, address, citizenId, gender, dob });
+    const {
+      password,
+      fullName,
+      email,
+      phone,
+      address,
+      citizenId,
+      gender,
+      dob,
+    } = req.body;
+    const data = await addNewStaffService({
+      password,
+      fullName,
+      email,
+      phone,
+      address,
+      citizenId,
+      gender,
+      dob,
+    });
     res.json(data);
   } catch (error) {
     console.error("Controller Error - addNewStaff:", error);

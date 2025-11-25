@@ -1,11 +1,11 @@
 const express = require("express");
 const {
-    createPolicy,
-    getAllPolicies,
-    getPolicy,
-    updatePolicy,
-    deletePolicy,
-    getPoliciesByCategory,
+  createPolicy,
+  getAllPolicies,
+  getPolicy,
+  updatePolicy,
+  deletePolicy,
+  getPoliciesByCategory,
 } = require("../controllers/policyController");
 
 const checkRole = require("../middleware/checkRole");

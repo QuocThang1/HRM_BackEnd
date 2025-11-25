@@ -1,10 +1,10 @@
 const express = require("express");
 const {
-    createShiftType,
-    getAllShiftTypes,
-    getShiftType,
-    updateShiftType,
-    deleteShiftType,
+  createShiftType,
+  getAllShiftTypes,
+  getShiftType,
+  updateShiftType,
+  deleteShiftType,
 } = require("../controllers/shiftTypeController");
 
 const checkRole = require("../middleware/checkRole");

@@ -27,14 +27,13 @@ class StaffDAO {
     }
   }
 
-
   async deleteStaffByID(staffId) {
     try {
       const deletedStaff = await Staff.findByIdAndDelete(staffId);
       if (deletedStaff) {
         await Department.updateMany(
           { managerId: staffId },
-          { $unset: { managerId: "" } }
+          { $unset: { managerId: "" } },
         );
       }
       return deletedStaff;
@@ -46,7 +45,9 @@ class StaffDAO {
 
   async updateStaffByID(staffId, updateData) {
     try {
-      return await Staff.findByIdAndUpdate(staffId, updateData, { new: true }).select("-password");
+      return await Staff.findByIdAndUpdate(staffId, updateData, {
+        new: true,
+      }).select("-password");
     } catch (error) {
       console.error("DAO Error - updateStaffByID:", error);
       throw error;
@@ -62,6 +63,56 @@ class StaffDAO {
     }
   }
 
+  async setResetTokenByEmail(email, token, expires) {
+    try {
+      const update = { resetPasswordToken: token };
+      if (expires === null) {
+        update.resetPasswordExpires = null;
+      } else if (expires !== undefined) {
+        // ensure expires is stored as Date
+        update.resetPasswordExpires =
+          expires instanceof Date ? expires : new Date(expires);
+      }
+      return await Staff.findOneAndUpdate(
+        { "personalInfo.email": email },
+        update,
+        { new: true },
+      );
+    } catch (error) {
+      console.error("DAO Error - setResetTokenByEmail:", error);
+      throw error;
+    }
+  }
+
+  async findByResetToken(token) {
+    try {
+      return await Staff.findOne({
+        resetPasswordToken: token,
+        resetPasswordExpires: { $gt: new Date() },
+      });
+    } catch (error) {
+      console.error("DAO Error - findByResetToken:", error);
+      throw error;
+    }
+  }
+
+  async updatePasswordById(staffId, hashedPassword) {
+    try {
+      return await Staff.findByIdAndUpdate(
+        staffId,
+        {
+          password: hashedPassword,
+          resetPasswordToken: null,
+          resetPasswordExpires: null,
+        },
+        { new: true },
+      );
+    } catch (error) {
+      console.error("DAO Error - updatePasswordById:", error);
+      throw error;
+    }
+  }
+
   async createStaff(data) {
     try {
       const staff = new Staff(data);
@@ -69,7 +120,10 @@ class StaffDAO {
     } catch (error) {
       console.error("DAO Error - createStaff:", error);
       if (error.errInfo && error.errInfo.details) {
-        console.error("Validation details:", JSON.stringify(error.errInfo.details, null, 2));
+        console.error(
+          "Validation details:",
+          JSON.stringify(error.errInfo.details, null, 2),
+        );
       }
       throw error;
     }
@@ -77,7 +131,10 @@ class StaffDAO {
 
   async updateProfile(staffId, updateData) {
     try {
-      return await Staff.findByIdAndUpdate(staffId, updateData, { new: true, runValidators: true }).select("-password");
+      return await Staff.findByIdAndUpdate(staffId, updateData, {
+        new: true,
+        runValidators: true,
+      }).select("-password");
     } catch (error) {
       console.error("DAO Error - updateProfile:", error);
       throw error;
@@ -95,7 +152,11 @@ class StaffDAO {
 
   async assignStaffToDepartment(staffId, departmentId) {
     try {
-      return await Staff.findByIdAndUpdate(staffId, { departmentId }, { new: true }).select("-password");
+      return await Staff.findByIdAndUpdate(
+        staffId,
+        { departmentId },
+        { new: true },
+      ).select("-password");
     } catch (error) {
       console.error("DAO Error - assignStaffToDepartment:", error);
       throw error;
@@ -120,21 +181,20 @@ class StaffDAO {
       if (staff && staff.role === "manager" && staff.departmentId) {
         await Department.updateOne(
           { _id: staff.departmentId, managerId: staffId },
-          { managerId: null }
+          { managerId: null },
         );
       }
 
       return await Staff.findByIdAndUpdate(
         staffId,
         { departmentId: null },
-        { new: true, runValidators: true }
+        { new: true, runValidators: true },
       ).select("-password");
     } catch (error) {
       console.error("DAO Error - removeStaffFromDepartment:", error);
       throw error;
     }
   }
-
 }
 
 module.exports = new StaffDAO();

@@ -1,12 +1,12 @@
 const express = require("express");
 const {
-    createSalary,
-    getAllSalaries,
-    getSalary,
-    getSalaryByStaff,
-    updateSalary,
-    deleteSalary,
-    getMySalary,
+  createSalary,
+  getAllSalaries,
+  getSalary,
+  getSalaryByStaff,
+  updateSalary,
+  deleteSalary,
+  getMySalary,
 } = require("../controllers/salaryController");
 
 const checkRole = require("../middleware/checkRole");
