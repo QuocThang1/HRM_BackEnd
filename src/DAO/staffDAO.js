@@ -115,12 +115,26 @@ class StaffDAO {
       const staff = new Staff(data);
       return await staff.save();
     } catch (error) {
-      console.error("DAO Error - createStaff:", error);
-      if (error.errInfo && error.errInfo.details) {
+      console.error("DAO Error - createStaff:", error.message);
+      // Log full error object to help diagnose MongoDB validation failures
+      try {
         console.error(
-          "Validation details:",
-          JSON.stringify(error.errInfo.details, null, 2),
+          "Full error:",
+          JSON.stringify(error, Object.getOwnPropertyNames(error), 2),
         );
+      } catch (jsonErr) {
+        console.error("Could not stringify error object:", jsonErr);
+        console.error(error);
+      }
+      if (error.errInfo) {
+        try {
+          console.error(
+            "Validation details:",
+            JSON.stringify(error.errInfo, null, 2),
+          );
+        } catch (e) {
+          console.error("Could not stringify errInfo:", e, error.errInfo);
+        }
       }
       throw error;
     }
