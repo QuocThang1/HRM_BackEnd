@@ -4,11 +4,12 @@
   "description": "Backend nodejs",
   "main": "server.js",
   "scripts": {
-    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives",
     "format": "prettier --write .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon ./src/server.js",
     "start": "nodemon ./src/server.js",
+    "seed:policies": "node src/seeds/seedPolicies.js",
     "prepare": "husky",
     "lint-staged": "lint-staged"
   },
@@ -18,6 +19,7 @@
   ],
   "license": "ISC",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "bcrypt": "5.1.1",
     "cors": "2.8.5",
     "dotenv": "16.4.5",
@@ -46,8 +48,7 @@
   "lint-staged": {
     "*.js": [
       "npm run lint",
-      "npm run format",
-      "git add ."
+      "npm run format"
     ]
   }
 }

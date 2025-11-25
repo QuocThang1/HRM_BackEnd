@@ -172,6 +172,19 @@ const deleteDepartmentReviewService = async (reviewId) => {
   }
 };
 
+const getDepartmentByManagerService = async (managerId) => {
+  try {
+    const department = await departmentDAO.getDepartmentByManagerId(managerId);
+    if (!department) {
+      return { EC: 1, EM: "No department found for this manager" };
+    }
+    return { EC: 0, EM: "Success", data: department };
+  } catch (error) {
+    console.error("Service Error - getDepartmentByManagerService:", error);
+    return { EC: -1, EM: "Error fetching department" };
+  }
+};
+
 module.exports = {
   createDepartmentService,
   getDepartmentsService,
@@ -184,4 +197,5 @@ module.exports = {
   getDepartmentReviewsByAdminService,
   updateDepartmentReviewService,
   deleteDepartmentReviewService,
+  getDepartmentByManagerService,
 };

@@ -10,6 +10,7 @@ const {
   getDepartmentReviewsByAdminService,
   updateDepartmentReviewService,
   deleteDepartmentReviewService,
+  getDepartmentByManagerService,
 } = require("../services/departmentService");
 
 const createDepartment = async (req, res) => {
@@ -153,6 +154,17 @@ const deleteDepartmentReview = async (req, res) => {
   }
 };
 
+const getDepartmentByManager = async (req, res) => {
+  try {
+    const managerId = req.staff._id;
+    const data = await getDepartmentByManagerService(managerId);
+    res.json(data);
+  } catch (error) {
+    console.error("Controller Error - getDepartmentByManager:", error);
+    res.json({ EC: -1, EM: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   createDepartment,
   getDepartments,
@@ -165,4 +177,5 @@ module.exports = {
   getDepartmentReviewsByAdmin,
   updateDepartmentReview,
   deleteDepartmentReview,
+  getDepartmentByManager,
 };

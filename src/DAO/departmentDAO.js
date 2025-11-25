@@ -174,6 +174,18 @@ class DepartmentDAO {
       throw error;
     }
   }
+
+  async getDepartmentByManagerId(managerId) {
+    try {
+      return await Department.findOne({ managerId }).populate(
+        "managerId",
+        "personalInfo.fullName personalInfo.email role",
+      );
+    } catch (error) {
+      console.error("DAO Error - getDepartmentByManagerId:", error);
+      throw error;
+    }
+  }
 }
 
 module.exports = new DepartmentDAO();
