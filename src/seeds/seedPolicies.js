@@ -4,11 +4,11 @@ const Policy = require("../models/policy");
 const connection = require("../config/database");
 
 const samplePolicies = [
-    // ========== NGHỈ PHÉP ==========
-    {
-        title: "Chính sách nghỉ phép năm",
-        category: "leave",
-        content: `Nhân viên chính thức được hưởng 12 ngày nghỉ phép có lương trong năm.
+  // ========== NGHỈ PHÉP ==========
+  {
+    title: "Chính sách nghỉ phép năm",
+    category: "leave",
+    content: `Nhân viên chính thức được hưởng 12 ngày nghỉ phép có lương trong năm.
 
 Quy định chi tiết:
 - Phép năm được tính từ ngày ký hợp đồng chính thức
@@ -19,12 +19,12 @@ Quy định chi tiết:
   + Hoặc quy đổi thành tiền lương theo mức lương cơ bản
 
 Lưu ý: Phép năm không áp dụng cho nhân viên thử việc.`,
-        isActive: true,
-    },
-    {
-        title: "Nghỉ ốm và nghỉ thai sản",
-        category: "leave",
-        content: `NGHỈ ỐM:
+    isActive: true,
+  },
+  {
+    title: "Nghỉ ốm và nghỉ thai sản",
+    category: "leave",
+    content: `NGHỈ ỐM:
 - Được nghỉ ốm có lương khi có giấy xác nhận của bác sĩ
 - Công ty chi trả 100% lương trong 3 ngày đầu
 - Từ ngày thứ 4 trở đi: chi trả theo quy định BHXH
@@ -34,12 +34,12 @@ NGHỈ THAI SẢN:
 - Nhân viên nữ: 6 tháng nghỉ thai sản có lương theo BHXH
 - Nhân viên nam: 5 ngày nghỉ chăm sóc vợ sinh con (có lương 100%)
 - Thai nghén: được nghỉ khám thai định kỳ (có lương, tối đa 5 lần)`,
-        isActive: true,
-    },
-    {
-        title: "Các loại phép khác",
-        category: "leave",
-        content: `PHÉP HIẾU/HỈ:
+    isActive: true,
+  },
+  {
+    title: "Các loại phép khác",
+    category: "leave",
+    content: `PHÉP HIẾU/HỈ:
 - Kết hôn: 3 ngày nghỉ có lương
 - Bố/mẹ, vợ/chồng, con qua đời: 5 ngày nghỉ có lương
 - Anh chị em ruột qua đời: 2 ngày nghỉ có lương
@@ -53,14 +53,14 @@ PHÉP BÙ:
 - Khi làm thêm giờ, cuối tuần, được nghỉ bù tương ứng
 - Phải sử dụng trong vòng 30 ngày
 - Phải thỏa thuận trước với quản lý`,
-        isActive: true,
-    },
+    isActive: true,
+  },
 
-    // ========== LƯƠNG THƯỞNG ==========
-    {
-        title: "Chính sách lương cơ bản",
-        category: "salary",
-        content: `CẤU TRÚC LƯƠNG:
+  // ========== LƯƠNG THƯỞNG ==========
+  {
+    title: "Chính sách lương cơ bản",
+    category: "salary",
+    content: `CẤU TRÚC LƯƠNG:
 - Lương cơ bản: Theo thỏa thuận hợp đồng
 - Phụ cấp: Ăn trưa 30.000đ/ngày, xăng xe 20.000đ/ngày
 - Lương làm thêm giờ:
@@ -77,12 +77,12 @@ TĂNG LƯƠNG:
 - Xét tăng lương định kỳ: 1 lần/năm (tháng 1)
 - Dựa trên: Hiệu suất công việc, đánh giá năng lực, thâm niên
 - Tăng lương đột xuất: Khi được thăng chức hoặc có thành tích xuất sắc`,
-        isActive: true,
-    },
-    {
-        title: "Thưởng và đãi ngộ",
-        category: "salary",
-        content: `THƯỞNG HIỆU SUẤT:
+    isActive: true,
+  },
+  {
+    title: "Thưởng và đãi ngộ",
+    category: "salary",
+    content: `THƯỞNG HIỆU SUẤT:
 - Thưởng quý: Dựa trên KPI cá nhân (0.5 - 2 tháng lương)
 - Đánh giá vào cuối mỗi quý, chi trả vào tháng tiếp theo
 
@@ -100,14 +100,14 @@ THƯỞNG THÂM NIÊN:
 - 5 năm: 5 triệu + 5 ngày phép
 - 10 năm: 10 triệu + 10 ngày phép
 - 15 năm trở lên: 20 triệu + 15 ngày phép`,
-        isActive: true,
-    },
+    isActive: true,
+  },
 
-    // ========== GIỜ LÀM VIỆC ==========
-    {
-        title: "Giờ làm việc chính thức",
-        category: "working_hours",
-        content: `THỜI GIAN LÀM VIỆC:
+  // ========== GIỜ LÀM VIỆC ==========
+  {
+    title: "Giờ làm việc chính thức",
+    category: "working_hours",
+    content: `THỜI GIAN LÀM VIỆC:
 - Thứ 2 đến Thứ 6: 8:00 - 17:00
 - Nghỉ trưa: 12:00 - 13:00
 - Thứ 7, Chủ nhật: Nghỉ
@@ -128,12 +128,12 @@ LÀM THÊM GIỜ:
 - Phải có sự phê duyệt trước của quản lý
 - Tối đa 4 giờ/ngày, 20 giờ/tháng
 - Được tính lương hoặc nghỉ bù`,
-        isActive: true,
-    },
-    {
-        title: "Làm việc từ xa (Remote)",
-        category: "working_hours",
-        content: `ĐIỀU KIỆN ĐƯỢC REMOTE:
+    isActive: true,
+  },
+  {
+    title: "Làm việc từ xa (Remote)",
+    category: "working_hours",
+    content: `ĐIỀU KIỆN ĐƯỢC REMOTE:
 - Đã qua thử việc và làm việc ít nhất 6 tháng
 - Công việc phù hợp với làm việc từ xa
 - Có đầy đủ thiết bị và kết nối internet ổn định
@@ -149,14 +149,14 @@ LƯU Ý:
 - Trong thời gian thử việc: KHÔNG được remote
 - Các vị trí yêu cầu trực tiếp (receptionist, IT support): KHÔNG áp dụng
 - Vi phạm quy định: Tạm ngưng quyền remote trong 3 tháng`,
-        isActive: true,
-    },
+    isActive: true,
+  },
 
-    // ========== PHÚC LỢI ==========
-    {
-        title: "Bảo hiểm và y tế",
-        category: "benefits",
-        content: `BẢO HIỂM BẮT BUỘC:
+  // ========== PHÚC LỢI ==========
+  {
+    title: "Bảo hiểm và y tế",
+    category: "benefits",
+    content: `BẢO HIỂM BẮT BUỘC:
 - BHXH: 17.5% (Công ty: 10.5%, Nhân viên: 8%)
 - BHYT: 4.5% (Công ty: 3%, Nhân viên: 1.5%)
 - BHTN: 2% (Công ty: 1%, Nhân viên: 1%)
@@ -175,12 +175,12 @@ CHĂM SÓC SỨC KHỎE:
 
 HỖ TRỢ NHÀ Ở:
 - Nhân viên từ tỉnh xa: Hỗ trợ 2 triệu/tháng trong 6 tháng đầu`,
-        isActive: true,
-    },
-    {
-        title: "Các phúc lợi khác",
-        category: "benefits",
-        content: `ĂN UỐNG:
+    isActive: true,
+  },
+  {
+    title: "Các phúc lợi khác",
+    category: "benefits",
+    content: `ĂN UỐNG:
 - Hỗ trợ ăn trưa: 30.000đ/ngày làm việc
 - Buffet trái cây, snack, cà phê miễn phí tại pantry
 - Teambuilding ăn uống: 1 lần/quý
@@ -207,14 +207,14 @@ HỖ TRỢ GIA ĐÌNH:
 - Sinh con: 5 triệu/lần
 - Hiếu hỷ: Hỗ trợ từ 2-5 triệu
 - Con nhân viên nhập học: Quà 1 triệu`,
-        isActive: true,
-    },
+    isActive: true,
+  },
 
-    // ========== KỶ LUẬT ==========
-    {
-        title: "Quy tắc ứng xử",
-        category: "discipline",
-        content: `TRANG PHỤC:
+  // ========== KỶ LUẬT ==========
+  {
+    title: "Quy tắc ứng xử",
+    category: "discipline",
+    content: `TRANG PHỤC:
 - Thứ 2-5: Trang phục lịch sự, chuyên nghiệp
 - Thứ 6: Casual (quần jean, áo thun được phép)
 - KHÔNG được: Quần đùi, dép lê, áo hở vai
@@ -236,12 +236,12 @@ QUAN HỆ ĐỒNG NGHIỆP:
 - KHÔNG quấy rối, phân biệt đối xử
 - KHÔNG gây mâu thuẫn, xích mích
 - Hợp tác, hỗ trợ lẫn nhau`,
-        isActive: true,
-    },
-    {
-        title: "Hình thức kỷ luật",
-        category: "discipline",
-        content: `MỨC ĐỘ KỶ LUẬT:
+    isActive: true,
+  },
+  {
+    title: "Hình thức kỷ luật",
+    category: "discipline",
+    content: `MỨC ĐỘ KỶ LUẬT:
 
 1. NHẮC NHỞ (MIỆNG):
 - Vi phạm nhỏ lần đầu
@@ -270,14 +270,14 @@ CÁC VI PHẠM DẪN ĐẾN SA THẢI:
 - Đi làm muộn > 10 lần/tháng
 - Vắng mặt không phép > 5 ngày liên tục
 - Tiết lộ bí mật công ty`,
-        isActive: true,
-    },
+    isActive: true,
+  },
 
-    // ========== TUYỂN DỤNG ==========
-    {
-        title: "Quy trình tuyển dụng",
-        category: "recruitment",
-        content: `BƯỚC 1: NỘP HỒ SƠ
+  // ========== TUYỂN DỤNG ==========
+  {
+    title: "Quy trình tuyển dụng",
+    category: "recruitment",
+    content: `BƯỚC 1: NỘP HỒ SƠ
 - Nộp CV qua email: hr@company.com
 - Hoặc ứng tuyển trên website
 - Tiêu đề email: [Vị trí] - [Họ tên]
@@ -309,12 +309,12 @@ BƯỚC 6: OFFER
 BƯỚC 7: ONBOARDING
 - Nhập môn, training trong 1 tuần đầu
 - Được phân công mentor hỗ trợ`,
-        isActive: true,
-    },
-    {
-        title: "Chính sách thử việc",
-        category: "recruitment",
-        content: `THỜI GIAN THỬ VIỆC:
+    isActive: true,
+  },
+  {
+    title: "Chính sách thử việc",
+    category: "recruitment",
+    content: `THỜI GIAN THỬ VIỆC:
 - Vị trí Staff: 2 tháng
 - Vị trí Leader/Manager: 3 tháng
 - Intern: 1 tháng
@@ -342,14 +342,14 @@ QUYỀN LỢI SAU THỬ VIỆC:
 - Được hưởng đầy đủ phúc lợi
 - Được nghỉ phép năm
 - Được tham gia bảo hiểm bổ sung`,
-        isActive: true,
-    },
+    isActive: true,
+  },
 
-    // ========== CHÍNH SÁCH CHUNG ==========
-    {
-        title: "Bảo mật thông tin",
-        category: "general",
-        content: `THÔNG TIN BẢO MẬT BAO GỒM:
+  // ========== CHÍNH SÁCH CHUNG ==========
+  {
+    title: "Bảo mật thông tin",
+    category: "general",
+    content: `THÔNG TIN BẢO MẬT BAO GỒM:
 - Dữ liệu khách hàng
 - Thông tin dự án
 - Báo cáo tài chính
@@ -372,12 +372,12 @@ VI PHẠM:
 - Bồi thường thiệt hại
 - Xử lý kỷ luật
 - Truy cứu trách nhiệm pháp lý nếu cần`,
-        isActive: true,
-    },
-    {
-        title: "Chính sách nghỉ việc",
-        category: "general",
-        content: `THÔNG BÁO NGHỈ VIỆC:
+    isActive: true,
+  },
+  {
+    title: "Chính sách nghỉ việc",
+    category: "general",
+    content: `THÔNG BÁO NGHỈ VIỆC:
 - Nhân viên thường: Trước 30 ngày
 - Quản lý: Trước 45 ngày
 - Trong thử việc: Trước 3 ngày
@@ -403,48 +403,48 @@ GIẤY XÁC NHẬN:
 - Xác nhận thời gian làm việc
 - Xác nhận vị trí công việc
 - Được cấp trong vòng 5 ngày làm việc`,
-        isActive: true,
-    },
+    isActive: true,
+  },
 ];
 
 // Function to seed database
 const seedPolicies = async () => {
-    try {
-        // Connect to MongoDB
-        await connection();
-        console.log("✅ Connected to MongoDB");
+  try {
+    // Connect to MongoDB
+    await connection();
+    console.log("✅ Connected to MongoDB");
 
-        // Clear existing policies
-        const deleteResult = await Policy.deleteMany({});
-        console.log(`🗑️  Deleted ${deleteResult.deletedCount} existing policies`);
+    // Clear existing policies
+    const deleteResult = await Policy.deleteMany({});
+    console.log(`🗑️  Deleted ${deleteResult.deletedCount} existing policies`);
 
-        // Insert new policies
-        const result = await Policy.insertMany(samplePolicies);
-        console.log(`✅ Successfully inserted ${result.length} policies`);
+    // Insert new policies
+    const result = await Policy.insertMany(samplePolicies);
+    console.log(`✅ Successfully inserted ${result.length} policies`);
 
-        // Display summary
-        console.log("\n📊 Summary by category:");
-        const categories = {
-            leave: "Nghỉ phép",
-            salary: "Lương thưởng",
-            working_hours: "Giờ làm việc",
-            benefits: "Phúc lợi",
-            discipline: "Kỷ luật",
-            recruitment: "Tuyển dụng",
-            general: "Chung",
-        };
+    // Display summary
+    console.log("\n📊 Summary by category:");
+    const categories = {
+      leave: "Nghỉ phép",
+      salary: "Lương thưởng",
+      working_hours: "Giờ làm việc",
+      benefits: "Phúc lợi",
+      discipline: "Kỷ luật",
+      recruitment: "Tuyển dụng",
+      general: "Chung",
+    };
 
-        for (const [key, value] of Object.entries(categories)) {
-            const count = result.filter((p) => p.category === key).length;
-            console.log(`   ${value}: ${count} policies`);
-        }
-
-        console.log("\n✅ Seeding completed successfully!");
-        process.exit(0);
-    } catch (error) {
-        console.error("❌ Error seeding policies:", error);
-        process.exit(1);
+    for (const [key, value] of Object.entries(categories)) {
+      const count = result.filter((p) => p.category === key).length;
+      console.log(`   ${value}: ${count} policies`);
     }
+
+    console.log("\n✅ Seeding completed successfully!");
+    process.exit(0);
+  } catch (error) {
+    console.error("❌ Error seeding policies:", error);
+    process.exit(1);
+  }
 };
 
 // Run the seed function

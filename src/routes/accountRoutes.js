@@ -1,8 +1,10 @@
 const express = require("express");
-const { handleSignUp,
-    handleLogin,
-    getAccount,
-    updateProfile, } = require("../controllers/accountController");
+const {
+  handleSignUp,
+  handleLogin,
+  getAccount,
+  updateProfile,
+} = require("../controllers/accountController");
 
 const routerAPI = express.Router();
 

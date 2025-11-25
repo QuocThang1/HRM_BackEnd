@@ -1,11 +1,11 @@
 const express = require("express");
 const {
-    checkIn,
-    checkOut,
-    getMyAttendances,
-    getAttendancesByDepartment,
-    getAllAttendances,
-    getTodayAttendance,
+  checkIn,
+  checkOut,
+  getMyAttendances,
+  getAttendancesByDepartment,
+  getAllAttendances,
+  getTodayAttendance,
 } = require("../controllers/attendanceController");
 
 const checkRole = require("../middleware/checkRole");
@@ -17,6 +17,10 @@ routerAPI.post("/check-out", checkRole("staff"), checkOut);
 routerAPI.get("/today", checkRole("staff"), getTodayAttendance);
 routerAPI.get("/", checkRole("manager"), getAllAttendances);
 routerAPI.get("/my-attendances", checkRole("staff"), getMyAttendances);
-routerAPI.get("/department/:departmentId", checkRole("admin", "manager"), getAttendancesByDepartment);
+routerAPI.get(
+  "/department/:departmentId",
+  checkRole("admin", "manager"),
+  getAttendancesByDepartment,
+);
 
 module.exports = routerAPI;
