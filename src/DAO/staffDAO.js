@@ -8,7 +8,9 @@ class StaffDAO {
       if (role) {
         filter.role = role;
       }
-      return await Staff.find(filter).select("-password");
+      return await Staff.find(filter)
+        .select("-password")
+        .populate("departmentId", "departmentName");
     } catch (error) {
       console.error("DAO Error - getAllStaff:", error);
       throw error;
@@ -17,7 +19,9 @@ class StaffDAO {
 
   async getStaffByID(staffId) {
     try {
-      return await Staff.findById(staffId).select("-password");
+      return await Staff.findById(staffId)
+        .select("-password")
+        .populate("departmentId", "departmentName");
     } catch (error) {
       console.error("DAO Error - getStaffByID:", error);
       throw error;

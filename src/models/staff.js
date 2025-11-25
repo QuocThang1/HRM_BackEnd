@@ -25,13 +25,6 @@ const staffSchema = new mongoose.Schema(
         enum: ["male", "female", "other"],
       },
     },
-    employmentInfo: {
-      position: String,
-      contractId: mongoose.Schema.Types.ObjectId,
-      salary: Number,
-      allowance: Number,
-      penalties: Number,
-    },
     candidateInfo: {
       cvUrl: String,
       status: {
