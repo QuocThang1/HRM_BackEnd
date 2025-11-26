@@ -94,6 +94,7 @@ const handleLoginService = async (email, password) => {
       access_token,
       refresh_token,
       staff: {
+        _id: staff._id,
         email: staff.personalInfo.email,
         name: staff.personalInfo.fullName,
         address: staff.personalInfo.address,
