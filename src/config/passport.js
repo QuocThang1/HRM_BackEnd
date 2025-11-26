@@ -15,45 +15,83 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
+        // Safely extract email and name
+        const email =
+          (profile &&
+            profile.emails &&
+            profile.emails[0] &&
+            profile.emails[0].value) ||
+          "";
+        const name =
+          (profile && (profile.displayName || profile._json?.name)) || "";
+        const googleId = profile && profile.id ? profile.id : "";
+
+        console.log("[Passport] Google callback received:", {
+          email,
+          name,
+          googleId,
+        });
+
+        if (!email) {
+          console.error(
+            "[Passport] Google profile did not contain an email. Aborting login.",
+          );
+          return done(new Error("No email returned from Google"), null);
+        }
+
         // Check if user exists
-        let staff = await staffDAO.findByEmail(profile.emails[0].value);
+        let staff = await staffDAO.findByEmail(email);
 
         if (!staff) {
           // Create new user
-          const email = profile.emails[0].value;
-          const name = profile.displayName;
-          const googleId = profile.id;
-
-          // Generate a random password for OAuth users
           const randomPassword = Math.random().toString(36).slice(-12);
           const hashedPassword = await bcrypt.hash(randomPassword, 10);
+
+          const personalInfo = {
+            fullName: name || email,
+            email: email,
+            phone: "",
+            address: "",
+            gender: "other",
+            citizenId: "",
+          };
+          // Only include dob if present and a valid date
+          if (profile && profile._json && profile._json.birthdate) {
+            const d = new Date(profile._json.birthdate);
+            if (!isNaN(d.getTime())) personalInfo.dob = d;
+          }
 
           const newStaffData = {
             password: hashedPassword,
             role: "candidate",
             googleId: googleId,
-            personalInfo: {
-              fullName: name,
-              email: email,
-              phone: "",
-              address: "",
-              gender: "other",
-              citizenId: "",
-              dob: null,
-            },
+            personalInfo,
           };
 
+          console.log("[Passport] Creating new staff with data:", {
+            email,
+            name,
+          });
           staff = await staffDAO.createStaff(newStaffData);
+          console.log("[Passport] New staff created via Google:", {
+            id: staff._id,
+            email: staff.personalInfo.email,
+          });
         } else {
           // Update googleId if not set
           if (!staff.googleId) {
-            staff.googleId = profile.id;
+            staff.googleId = googleId;
             await staff.save();
+            console.log("[Passport] Updated existing staff with googleId:", {
+              id: staff._id,
+              email: staff.personalInfo.email,
+            });
           }
         }
 
         return done(null, staff);
       } catch (error) {
+        console.error("[Passport] Google OIDC error:", error);
         return done(error, null);
       }
     },
@@ -111,44 +149,32 @@ passport.use(
             role: "candidate",
             microsoftId:
               profile.oid || profile._json?.oid || sub || profile.sub || "",
-            personalInfo: {
-              fullName: name,
-              email: email,
-              phone: "",
-              address: "",
-              gender: "other",
-              citizenId: "",
-              dob: null,
-            },
+            personalInfo: (function () {
+              const info = {
+                fullName: name,
+                email: email,
+                phone: "",
+                address: "",
+                gender: "other",
+                citizenId: "",
+              };
+              if (profile && profile._json && profile._json.birthdate) {
+                const d = new Date(profile._json.birthdate);
+                if (!isNaN(d.getTime())) info.dob = d;
+              }
+              return info;
+            })(),
           };
 
           staff = await staffDAO.createStaff(newStaffData);
-          console.log("[Passport] New staff created:", {
-            email,
-            id: staff._id,
-          });
         } else {
           // Update microsoftId if not set
           if (!staff.microsoftId) {
             staff.microsoftId =
               profile.oid || profile._json?.oid || sub || profile.sub || "";
             await staff.save();
-            console.log("[Passport] Existing staff updated:", {
-              email,
-              id: staff._id,
-            });
-          } else {
-            console.log("[Passport] Existing staff found:", {
-              email,
-              id: staff._id,
-            });
           }
         }
-
-        console.log("[Passport] Returning staff to done callback:", {
-          email,
-          id: staff._id,
-        });
         return done(null, staff);
       } catch (error) {
         console.error("[Passport] Microsoft OIDC error:", error.message, error);

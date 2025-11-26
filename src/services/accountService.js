@@ -25,20 +25,24 @@ const handleSignUpService = async (
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const now = new Date();
 
+    const personalInfo = {
+      fullName: name,
+      email,
+      phone: phone || "",
+      address: address || "",
+      gender: gender || "other",
+      citizenId: citizenId || "",
+    };
+    // Only include dob if provided and is a valid date
+    if (dob) {
+      const d = new Date(dob);
+      if (!isNaN(d.getTime())) personalInfo.dob = d;
+    }
+
     const newStaffData = {
       password: hashedPassword,
       role: "candidate",
-      personalInfo: {
-        fullName: name,
-        email,
-        phone: phone || "",
-        address: address || "",
-        gender: gender || "other",
-        citizenId: citizenId || "",
-        dob: dob || null,
-      },
-      created_at: now,
-      updated_at: now,
+      personalInfo,
     };
 
     const newStaff = await staffDAO.createStaff(newStaffData);
