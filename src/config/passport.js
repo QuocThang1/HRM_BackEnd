@@ -26,12 +26,6 @@ passport.use(
           (profile && (profile.displayName || profile._json?.name)) || "";
         const googleId = profile && profile.id ? profile.id : "";
 
-        console.log("[Passport] Google callback received:", {
-          email,
-          name,
-          googleId,
-        });
-
         if (!email) {
           console.error(
             "[Passport] Google profile did not contain an email. Aborting login.",
@@ -68,24 +62,12 @@ passport.use(
             personalInfo,
           };
 
-          console.log("[Passport] Creating new staff with data:", {
-            email,
-            name,
-          });
           staff = await staffDAO.createStaff(newStaffData);
-          console.log("[Passport] New staff created via Google:", {
-            id: staff._id,
-            email: staff.personalInfo.email,
-          });
         } else {
           // Update googleId if not set
           if (!staff.googleId) {
             staff.googleId = googleId;
             await staff.save();
-            console.log("[Passport] Updated existing staff with googleId:", {
-              id: staff._id,
-              email: staff.personalInfo.email,
-            });
           }
         }
 
@@ -99,10 +81,6 @@ passport.use(
 );
 
 // Microsoft (Azure AD) OIDC Strategy
-console.log(
-  "[Passport Init] Microsoft OIDC - redirectUrl:",
-  `${process.env.BACKEND_URL}/v1/api/auth/microsoft/callback`,
-);
 passport.use(
   new OIDCStrategy(
     {
@@ -128,13 +106,6 @@ passport.use(
           "";
         const name =
           (profile && (profile.displayName || profile._json?.name)) || "";
-
-        console.log("[Passport] Microsoft OIDC callback received:", {
-          email,
-          name,
-          profileOid: profile?.oid || profile?._json?.oid,
-          sub,
-        });
 
         let staff = null;
         if (email) staff = await staffDAO.findByEmail(email);

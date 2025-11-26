@@ -412,18 +412,14 @@ const seedPolicies = async () => {
   try {
     // Connect to MongoDB
     await connection();
-    console.log("✅ Connected to MongoDB");
 
     // Clear existing policies
     const deleteResult = await Policy.deleteMany({});
-    console.log(`🗑️  Deleted ${deleteResult.deletedCount} existing policies`);
 
     // Insert new policies
     const result = await Policy.insertMany(samplePolicies);
-    console.log(`✅ Successfully inserted ${result.length} policies`);
 
     // Display summary
-    console.log("\n📊 Summary by category:");
     const categories = {
       leave: "Nghỉ phép",
       salary: "Lương thưởng",
@@ -439,7 +435,6 @@ const seedPolicies = async () => {
       console.log(`   ${value}: ${count} policies`);
     }
 
-    console.log("\n✅ Seeding completed successfully!");
     process.exit(0);
   } catch (error) {
     console.error("❌ Error seeding policies:", error);

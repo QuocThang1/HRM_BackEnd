@@ -152,6 +152,101 @@ const getNotifications = async (req, res) => {
   }
 };
 
+// Mark a single notification as read
+const markNotificationRead = async (req, res) => {
+  try {
+    const { id } = req.body || {};
+    const userRole = req.staff?.role || "staff";
+    const userId = req.staff?._id;
+
+    if (!id) {
+      return res.status(400).json({ EC: 1, EM: "Notification id is required" });
+    }
+
+    if (userRole === "admin") {
+      await Notification.findByIdAndUpdate(id, { $set: { read: true } });
+      return res.status(200).json({ EC: 0, EM: "Marked read" });
+    }
+
+    // Ensure the notification is visible to this user
+    const notif = await Notification.findOne({
+      _id: id,
+      $or: [
+        { recipientId: userId },
+        { scope: "all" },
+        { scope: "department", departmentId: req.staff?.departmentId },
+      ],
+    });
+
+    if (!notif) {
+      return res.status(403).json({ EC: -1, EM: "Access denied" });
+    }
+
+    await Notification.findByIdAndUpdate(id, { $set: { read: true } });
+    return res.status(200).json({ EC: 0, EM: "Marked read" });
+  } catch (error) {
+    console.error("Error in markNotificationRead:", error);
+    return res.status(500).json({ EC: -1, EM: "Internal server error" });
+  }
+};
+
+// Mark all visible notifications as read for current user
+const markAllNotificationsRead = async (req, res) => {
+  try {
+    const userRole = req.staff?.role || "staff";
+    const userId = req.staff?._id;
+
+    let query = { read: false };
+    if (userRole !== "admin") {
+      query.$or = [
+        { recipientId: userId },
+        { scope: "department", departmentId: req.staff?.departmentId },
+        { scope: "all" },
+      ];
+    }
+
+    const result = await Notification.updateMany(query, {
+      $set: { read: true },
+    });
+    return res
+      .status(200)
+      .json({ EC: 0, EM: "All marked read", updated: result.modifiedCount });
+  } catch (error) {
+    console.error("Error in markAllNotificationsRead:", error);
+    return res.status(500).json({ EC: -1, EM: "Internal server error" });
+  }
+};
+
+// Delete a notification
+const deleteNotification = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const userRole = req.staff?.role || "staff";
+    const userId = req.staff?._id;
+
+    if (!id) {
+      return res.status(400).json({ EC: 1, EM: "Notification id is required" });
+    }
+
+    if (userRole === "admin") {
+      await Notification.deleteOne({ _id: id });
+      return res.status(200).json({ EC: 0, EM: "Deleted" });
+    }
+
+    // Non-admin can only delete personal notifications
+    const notif = await Notification.findOne({ _id: id, recipientId: userId });
+    if (!notif) {
+      return res.status(403).json({ EC: -1, EM: "Access denied" });
+    }
+
+    await Notification.deleteOne({ _id: id });
+    return res.status(200).json({ EC: 0, EM: "Deleted" });
+  } catch (error) {
+    console.error("Error in deleteNotification:", error);
+    return res.status(500).json({ EC: -1, EM: "Internal server error" });
+  }
+};
+
 const getAdminNotifications = async (req, res) => {
   try {
     const userRole = req.staff?.role;
@@ -192,4 +287,7 @@ module.exports = {
   getDueSoon,
   getNotifications,
   getAdminNotifications,
+  markNotificationRead,
+  markAllNotificationsRead,
+  deleteNotification,
 };

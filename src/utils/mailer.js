@@ -19,8 +19,6 @@ const verifyTransporter = () => {
   transporter.verify((err, success) => {
     if (err) {
       console.error("Mailer transporter verification failed:", err);
-    } else {
-      console.log("Mailer transporter is ready to send messages");
     }
   });
 };
@@ -53,15 +51,6 @@ const sendMail = async ({ to, subject, text, html }) => {
   // Try primary transporter first
   try {
     const info = await transporter.sendMail(mailOptions);
-    console.log("Email sent:", {
-      to,
-      subject,
-      messageId: info && info.messageId,
-      accepted: info && info.accepted,
-      rejected: info && info.rejected,
-      response: info && info.response,
-      preview: nodemailer.getTestMessageUrl(info) || null,
-    });
     return info;
   } catch (err) {
     console.error("Primary transporter sendMail failed:", err);
@@ -78,7 +67,6 @@ const sendMail = async ({ to, subject, text, html }) => {
       const { transporter: ethTrans } = await createEtherealTransporter();
       const info = await ethTrans.sendMail(mailOptions);
       const preview = nodemailer.getTestMessageUrl(info);
-      console.log("Ethereal fallback sent. Preview URL:", preview);
       return info;
     } catch (ethErr) {
       console.error("Ethereal fallback also failed:", ethErr);

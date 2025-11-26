@@ -245,7 +245,7 @@ const notifyShiftAssignment = async (
  */
 const notifyUserLogin = async (staffId, staffName, email, role) => {
   return createNotification({
-    title: `User Login: ${role}`,
+    title: `User Login: ${staffName} - ${role}`,
     message: `${staffName} (${email}) has logged in`,
     type: "info",
     relatedTo: "login",

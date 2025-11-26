@@ -93,7 +93,6 @@ const updateProfile = async (req, res) => {
 const handleForgotPassword = async (req, res) => {
   try {
     // Debug: log full body to ensure frontend payload is received
-    console.log(">>> CONTROLLER HIT body:", JSON.stringify(req.body));
     const { email, frontendUrl } = req.body;
     const data = await requestPasswordResetService(
       email,

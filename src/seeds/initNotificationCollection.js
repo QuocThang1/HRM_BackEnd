@@ -1,22 +1,15 @@
-/**
- * Initialize tblnotifications collection with proper schema validation
- * Run this ONCE to fix the schema, then comment it out
- */
-
 require("dotenv").config();
 const mongoose = require("mongoose");
 
 const initNotificationCollection = async () => {
   try {
     await mongoose.connect(process.env.MONGO_DB_URL);
-    console.log("Connected to MongoDB");
 
     const db = mongoose.connection.db;
 
     // Drop existing collection if it exists
     try {
       await db.dropCollection("tblnotifications");
-      console.log("Dropped existing tblnotifications collection");
     } catch (err) {
       console.log("Collection doesn't exist yet, creating new one");
     }
@@ -71,20 +64,13 @@ const initNotificationCollection = async () => {
       },
     });
 
-    console.log(
-      "✅ tblnotifications collection created with schema validation",
-    );
-
     // Create indexes for better query performance
     await db.collection("tblnotifications").createIndex({ createdAt: -1 });
     await db.collection("tblnotifications").createIndex({ senderId: 1 });
     await db.collection("tblnotifications").createIndex({ scope: 1 });
     await db.collection("tblnotifications").createIndex({ read: 1 });
 
-    console.log("✅ Indexes created");
-
     await mongoose.connection.close();
-    console.log("✅ Connection closed");
     process.exit(0);
   } catch (error) {
     console.error("❌ Error:", error.message);
