@@ -73,7 +73,6 @@ const auth = (req, res, next) => {
       next(); // Proceed to the next middleware or route handler
     } catch (error) {
       // Avoid leaking internal error details in logs for malformed tokens
-      console.warn("JWT verify failed:", error.message);
       return res
         .status(401)
         .json({ message: "Unauthorized access, invalid token" });
