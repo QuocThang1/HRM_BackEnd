@@ -190,32 +190,66 @@ const requestPasswordResetService = async (email) => {
     const subject = "Password Reset OTP";
     const text = `Your OTP to reset password is: ${otp} (valid for 10 minutes)`;
     const html = `
-      <div style="font-family: Arial, Helvetica, sans-serif; color: #222;">
-        <div style="max-width:680px;margin:0 auto;padding:24px 16px;">
-          <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
-            <div style="width:40px;height:40px;border-radius:50%;background:#1877f2;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:20px;">F</div>
-            <div style="font-size:14px;color:#666;">HRM System</div>
+      <div style="font-family: Arial, Helvetica, sans-serif; color:#1c1e21; background:#f0f2f5; padding:40px 0;">
+        <div style="max-width:580px; margin:0 auto; background:#fff; border-radius:8px; padding:32px 40px;">
+          
+          <!-- Header -->
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <img src="HRM_FrontEnd/public/logo-email.png" width="32" />
+              <span style="font-size:15px; color:#65676b;">NextGen Solution</span>
+            </div>
+
           </div>
 
-          <h2 style="margin:8px 0 6px;font-size:20px;color:#111">Thêm một bước nữa để đổi mật khẩu của bạn</h2>
+          <h2 style="font-size:22px; margin:0 0 16px;">Thêm một bước nữa để đổi mật khẩu của bạn</h2>
 
-          <p style="color:#444;font-size:14px;">Xin chào,</p>
-          <p style="color:#444;font-size:14px;">Chúng tôi đã nhận được yêu cầu đổi mật khẩu của bạn. Hãy nhập mã này vào ứng dụng:</p>
+          <p style="font-size:15px; color:#444;">Xin chào ${email},</p>
 
-          <div style="margin:18px 0;text-align:center;">
-            <div style="display:inline-block;background:#eef6ff;border-radius:8px;padding:18px 36px;border:1px solid #d6e7ff;box-shadow:0 6px 18px rgba(102,126,234,0.12);">
-              <span style="letter-spacing:6px;font-size:28px;font-weight:700;color:#0a2540;">${otp}</span>
+          <p style="font-size:15px; color:#444;">
+            Chúng tôi đã nhận được yêu cầu đổi mật khẩu của bạn. Hãy nhập mã này vào ứng dụng HRM:
+          </p>
+
+          <!-- OTP Box -->
+          <div style="margin:24px 0; text-align:center;">
+            <div style="
+              display:inline-block;
+              background:#f5f6f7;
+              padding:20px 32px;
+              border-radius:8px;
+              border:1px solid #ccd0d5;
+            ">
+              <span style="font-size:32px; font-weight:700; letter-spacing:6px; color:#1c1e21;">
+                ${otp}
+              </span>
             </div>
           </div>
 
-          <p style="color:#777;font-size:13px;margin-top:12px">Không chia sẻ mã này với bất kỳ ai.</p>
+          <p style="font-size:13px; text-align:center; color:#606770;">
+            Không chia sẻ mã này với bất kỳ ai.
+          </p>
 
-          <hr style="border:none;border-top:1px solid #eee;margin:20px 0" />
+          <hr style="border:none; border-top:1px solid #ddd; margin:30px 0;" />
 
-          <p style="font-size:13px;color:#666">Nếu bạn không gửi yêu cầu này, hãy bỏ qua email này hoặc liên hệ bộ phận hỗ trợ.</p>
+          <p style="font-size:14px; color:#444;">
+            <strong>Nếu có người yêu cầu mã này:</strong><br/>
+            Đừng chia sẻ mã này với bất kỳ ai, đặc biệt với người nói là họ làm việc cho HRM hoặc quản trị viên.
+          </p>
 
-          <p style="font-size:13px;color:#666;margin-top:18px">Trân trọng,<br/>Đội ngũ HRM System</p>
+          <p style="font-size:14px; color:#444; margin-top:16px;">
+            <strong>Bạn không gửi yêu cầu này?</strong><br/>
+            Nếu bạn nhận được email này mà không phải bạn muốn đặt lại mật khẩu, hãy bỏ qua hoặc liên hệ bộ phận hỗ trợ.
+          </p>
+
+          <p style="font-size:14px; color:#444; margin-top:24px;">
+            Trân trọng,<br/>
+            Đội ngũ NextGen Solution
+          </p>
         </div>
+
+        <p style="text-align:center; font-size:12px; color:#777; margin-top:16px;">
+          Bạn nhận được email này vì có yêu cầu đặt lại mật khẩu tài khoản HRM của bạn.
+        </p>
       </div>
     `;
 

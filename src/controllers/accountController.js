@@ -8,6 +8,7 @@ const {
   resetPasswordService,
   verifyOtpService,
 } = require("../services/accountService");
+const { notifyUserLogin } = require("../services/notificationService");
 
 const handleSignUp = async (req, res) => {
   try {
@@ -35,6 +36,16 @@ const handleLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
     const data = await handleLoginService(email, password);
+
+    // Create notification for login (admin sees who logged in)
+    if (data && data.EC === 0 && data.staff) {
+      await notifyUserLogin(
+        data.staff._id,
+        data.staff.name || data.staff.personalInfo?.fullName || email,
+        email,
+        data.staff.role,
+      );
+    }
     return res.status(200).json(data);
   } catch (error) {
     console.error("Controller Error - handleLogin:", error);

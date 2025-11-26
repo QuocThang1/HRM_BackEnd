@@ -9,6 +9,10 @@ const {
   getStaffNotInDepartmentService,
   removeStaffFromDepartmentService,
 } = require("../services/staffService");
+const {
+  notifyStaffCreated,
+  notifyStaffUpdated,
+} = require("../services/notificationService");
 
 const getStaff = async (req, res) => {
   try {
@@ -43,6 +47,12 @@ const addNewStaff = async (req, res) => {
       gender,
       dob,
     });
+
+    // Notify admin of new staff creation
+    if (data && data.EC === 0 && data.DT) {
+      await notifyStaffCreated(data.DT, req.staff?._id);
+    }
+
     res.json(data);
   } catch (error) {
     console.error("Controller Error - addNewStaff:", error);
@@ -66,6 +76,17 @@ const updateStaff = async (req, res) => {
     const staffId = req.params.id;
     const updateData = req.body;
     const data = await updateStaffService(staffId, updateData);
+
+    // Notify admin of staff update
+    if (data && data.EC === 0) {
+      await notifyStaffUpdated(
+        staffId,
+        data.DT?.personalInfo?.fullName || "Staff",
+        updateData,
+        req.staff?._id,
+      );
+    }
+
     res.json(data);
   } catch (error) {
     console.error("Controller Error - updateStaff:", error);

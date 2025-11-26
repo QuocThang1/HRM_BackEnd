@@ -6,6 +6,7 @@ const {
   getAllAttendancesService,
   getTodayAttendanceService,
 } = require("../services/attendanceService");
+const { notifyAttendanceRecord } = require("../services/notificationService");
 
 const checkIn = async (req, res) => {
   try {
@@ -13,6 +14,17 @@ const checkIn = async (req, res) => {
     const { location } = req.body;
 
     const data = await checkInService(staffId, location);
+
+    // Notify admin of check-in
+    if (data && data.EC === 0) {
+      await notifyAttendanceRecord(
+        staffId,
+        req.staff?.name || "Staff",
+        "Checked In",
+        req.staff?._id,
+      );
+    }
+
     res.json(data);
   } catch (error) {
     console.error("Controller Error - checkIn:", error);
@@ -26,6 +38,17 @@ const checkOut = async (req, res) => {
     const { location } = req.body;
 
     const data = await checkOutService(staffId, location);
+
+    // Notify admin of check-out
+    if (data && data.EC === 0) {
+      await notifyAttendanceRecord(
+        staffId,
+        req.staff?.name || "Staff",
+        "Checked Out",
+        req.staff?._id,
+      );
+    }
+
     res.json(data);
   } catch (error) {
     console.error("Controller Error - checkOut:", error);

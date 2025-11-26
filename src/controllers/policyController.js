@@ -6,6 +6,7 @@ const {
   deletePolicyService,
   getPoliciesByCategoryService,
 } = require("../services/policyService");
+const { notifyPolicyUpdated } = require("../services/notificationService");
 
 const createPolicy = async (req, res) => {
   try {
@@ -13,6 +14,16 @@ const createPolicy = async (req, res) => {
     const data = req.body;
 
     const result = await createPolicyService(data, createdBy);
+
+    // Notify admin of policy creation
+    if (result && result.EC === 0 && result.DT) {
+      await notifyPolicyUpdated(
+        result.DT.title || "New Policy",
+        result.DT._id,
+        createdBy,
+      );
+    }
+
     res.json(result);
   } catch (error) {
     console.error("Controller Error - createPolicy:", error);
@@ -58,6 +69,12 @@ const updatePolicy = async (req, res) => {
     const updateData = req.body;
 
     const data = await updatePolicyService(id, updateData);
+
+    // Notify admin of policy update
+    if (data && data.EC === 0 && data.DT) {
+      await notifyPolicyUpdated(data.DT.title || "Policy", id, req.staff?._id);
+    }
+
     res.json(data);
   } catch (error) {
     console.error("Controller Error - updatePolicy:", error);
