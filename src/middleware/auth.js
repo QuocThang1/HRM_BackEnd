@@ -8,6 +8,7 @@ const auth = (req, res, next) => {
     "/v1/api/account/forgot-password",
     "/v1/api/account/verify-otp",
     "/v1/api/account/reset-password",
+    "/v1/api/account/refresh-token",
     "/v1/api/auth/google",
     "/v1/api/auth/google/callback",
     "/v1/api/auth/microsoft",

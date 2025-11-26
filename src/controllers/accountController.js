@@ -1,3 +1,4 @@
+const { Buffer } = require("buffer");
 const {
   handleSignUpService,
   handleLoginService,
@@ -121,6 +122,58 @@ const handleVerifyOtp = async (req, res) => {
   }
 };
 
+const handleRefreshToken = async (req, res) => {
+  try {
+    const { refresh_token } = req.body;
+    if (!refresh_token) {
+      return res.status(400).json({ EC: 1, EM: "Refresh token is required" });
+    }
+
+    const jwt = require("jsonwebtoken");
+    const staffDAO = require("../DAO/staffDAO");
+
+    // Verify refresh token
+    let decoded;
+    try {
+      decoded = jwt.verify(refresh_token, process.env.REFRESH_TOKEN_SECRET);
+    } catch (error) {
+      console.error("Refresh token verification failed:", error);
+      return res
+        .status(401)
+        .json({ EC: 1, EM: "Refresh token expired or invalid" });
+    }
+
+    // Get staff info to create new access token
+    const staff = await staffDAO.getStaffByID(decoded.id);
+    if (!staff) {
+      return res.status(401).json({ EC: 1, EM: "Staff not found" });
+    }
+
+    // Create new access token
+    const payload = {
+      id: staff._id,
+      email: staff.personalInfo.email,
+      name: Buffer.from(staff.personalInfo.fullName, "utf8").toString(),
+      address: staff.personalInfo.address,
+      phone: staff.personalInfo.phone,
+      role: staff.role,
+    };
+
+    const access_token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRES_IN,
+    });
+
+    return res.status(200).json({
+      EC: 0,
+      EM: "Access token refreshed successfully",
+      access_token,
+    });
+  } catch (error) {
+    console.error("Controller Error - handleRefreshToken:", error);
+    return res.status(500).json({ EC: -1, EM: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   handleSignUp,
   handleLogin,
@@ -129,4 +182,5 @@ module.exports = {
   handleForgotPassword,
   handleResetPassword,
   handleVerifyOtp,
+  handleRefreshToken,
 };

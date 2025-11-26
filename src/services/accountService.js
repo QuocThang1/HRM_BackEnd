@@ -73,14 +73,20 @@ const handleLoginService = async (email, password) => {
 
     const access_token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRES_IN,
-      // Add encoding option if supported
-      // encoding: 'utf8',
     });
+
+    // Create refresh token with longer expiration
+    const refresh_token = jwt.sign(
+      { id: staff._id, email: staff.personalInfo.email },
+      process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN },
+    );
 
     return {
       EC: 0,
       EM: "Login successful",
       access_token,
+      refresh_token,
       staff: {
         email: staff.personalInfo.email,
         name: staff.personalInfo.fullName,

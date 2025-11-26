@@ -46,13 +46,20 @@ router.get(
       };
 
       const access_token = jwt.sign(payload, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRES_IN || "7d",
+        expiresIn: process.env.JWT_EXPIRES_IN || "10m",
       });
 
-      // Redirect to frontend with token
+      // Generate refresh token
+      const refresh_token = jwt.sign(
+        { id: staff._id, email: staff.personalInfo.email },
+        process.env.REFRESH_TOKEN_SECRET,
+        { expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || "7d" },
+      );
+
+      // Redirect to frontend with tokens
       const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
       res.redirect(
-        `${frontendUrl}/login?token=${access_token}&provider=google`,
+        `${frontendUrl}/login?token=${access_token}&refresh_token=${refresh_token}&provider=google`,
       );
     } catch (error) {
       console.error("Google callback error:", error);
@@ -116,8 +123,15 @@ const microsoftCallbackHandler = [
       };
 
       const access_token = jwt.sign(payload, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRES_IN || "7d",
+        expiresIn: process.env.JWT_EXPIRES_IN || "10m",
       });
+
+      // Generate refresh token
+      const refresh_token = jwt.sign(
+        { id: staff._id, email: staff.personalInfo.email },
+        process.env.REFRESH_TOKEN_SECRET,
+        { expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || "7d" },
+      );
 
       // Redirect to frontend with token
       const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
@@ -126,7 +140,7 @@ const microsoftCallbackHandler = [
         `${frontendUrl}/login?token=***&provider=microsoft`,
       );
       res.redirect(
-        `${frontendUrl}/login?token=${access_token}&provider=microsoft`,
+        `${frontendUrl}/login?token=${access_token}&refresh_token=${refresh_token}&provider=microsoft`,
       );
     } catch (error) {
       console.error("Microsoft callback error:", error);
