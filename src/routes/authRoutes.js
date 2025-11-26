@@ -122,14 +122,20 @@ const microsoftCallbackHandler = [
         role: staff.role,
       };
 
-      const access_token = jwt.sign(payload, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRES_IN || "10m",
-      });
+      const access_token = jwt.sign(
+        payload,
+        process.env.JWT_SECRET || "default-jwt-secret",
+        {
+          expiresIn: process.env.JWT_EXPIRES_IN || "10m",
+        },
+      );
 
       // Generate refresh token
       const refresh_token = jwt.sign(
         { id: staff._id, email: staff.personalInfo.email },
-        process.env.REFRESH_TOKEN_SECRET,
+        process.env.REFRESH_TOKEN_SECRET ||
+          process.env.JWT_SECRET ||
+          "default-refresh-secret",
         { expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || "7d" },
       );
 

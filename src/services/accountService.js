@@ -71,15 +71,21 @@ const handleLoginService = async (email, password) => {
       role: staff.role,
     };
 
-    const access_token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRES_IN,
-    });
+    const access_token = jwt.sign(
+      payload,
+      process.env.JWT_SECRET || "default-jwt-secret",
+      {
+        expiresIn: process.env.JWT_EXPIRES_IN || "10m",
+      },
+    );
 
     // Create refresh token with longer expiration
     const refresh_token = jwt.sign(
       { id: staff._id, email: staff.personalInfo.email },
-      process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN },
+      process.env.REFRESH_TOKEN_SECRET ||
+        process.env.JWT_SECRET ||
+        "default-refresh-secret",
+      { expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || "7d" },
     );
 
     return {

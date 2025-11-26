@@ -135,7 +135,12 @@ const handleRefreshToken = async (req, res) => {
     // Verify refresh token
     let decoded;
     try {
-      decoded = jwt.verify(refresh_token, process.env.REFRESH_TOKEN_SECRET);
+      decoded = jwt.verify(
+        refresh_token,
+        process.env.REFRESH_TOKEN_SECRET ||
+          process.env.JWT_SECRET ||
+          "default-refresh-secret",
+      );
     } catch (error) {
       console.error("Refresh token verification failed:", error);
       return res
@@ -159,9 +164,13 @@ const handleRefreshToken = async (req, res) => {
       role: staff.role,
     };
 
-    const access_token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRES_IN,
-    });
+    const access_token = jwt.sign(
+      payload,
+      process.env.JWT_SECRET || "default-jwt-secret",
+      {
+        expiresIn: process.env.JWT_EXPIRES_IN || "10m",
+      },
+    );
 
     return res.status(200).json({
       EC: 0,

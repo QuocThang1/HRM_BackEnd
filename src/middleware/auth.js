@@ -36,7 +36,10 @@ const auth = (req, res, next) => {
     }
 
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(
+        token,
+        process.env.JWT_SECRET || "default-jwt-secret",
+      );
       req.staff = {
         email: decoded.email,
         name: decoded.name,
@@ -56,9 +59,13 @@ const auth = (req, res, next) => {
         role: decoded.role,
       };
 
-      const newToken = jwt.sign(newPayload, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRES_IN,
-      });
+      const newToken = jwt.sign(
+        newPayload,
+        process.env.JWT_SECRET || "default-jwt-secret",
+        {
+          expiresIn: process.env.JWT_EXPIRES_IN || "10m",
+        },
+      );
 
       // Attach new token to response header
       res.setHeader("X-New-Token", newToken);
