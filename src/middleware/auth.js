@@ -45,6 +45,24 @@ const auth = (req, res, next) => {
         _id: decoded.id,
         role: decoded.role,
       };
+
+      // Generate a new token with extended expiration (sliding window)
+      const newPayload = {
+        id: decoded.id,
+        email: decoded.email,
+        name: decoded.name,
+        address: decoded.address,
+        phone: decoded.phone,
+        role: decoded.role,
+      };
+
+      const newToken = jwt.sign(newPayload, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRES_IN,
+      });
+
+      // Attach new token to response header
+      res.setHeader("X-New-Token", newToken);
+
       next(); // Proceed to the next middleware or route handler
     } catch (error) {
       // Avoid leaking internal error details in logs for malformed tokens
