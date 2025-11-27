@@ -6,7 +6,6 @@ const contractSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Staff",
       required: true,
-      unique: true,
     },
     content: {
       type: String,

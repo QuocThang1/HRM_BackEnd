@@ -87,33 +87,12 @@ app.use("/v1/api/monthly-salaries", monthlySalaryRoutes);
 app.use("/v1/api/policies", policyRoutes);
 app.use("/v1/api/todos", todoRoutes);
 
-/* ---------------------------------------------------
-   Start server
---------------------------------------------------- */
 (async () => {
   try {
     await connection(); // Kết nối MongoDB
 
     app.listen(port, () => {
       console.log(`Backend Node.js App listening on port ${port}`);
-
-      // Warn if using default secrets
-      if (
-        !process.env.JWT_SECRET ||
-        process.env.JWT_SECRET === "default-jwt-secret"
-      ) {
-        console.warn(
-          "⚠️  WARNING: Using default JWT_SECRET! Set JWT_SECRET in .env file for production.",
-        );
-      }
-      if (
-        !process.env.REFRESH_TOKEN_SECRET ||
-        process.env.REFRESH_TOKEN_SECRET === "default-refresh-secret"
-      ) {
-        console.warn(
-          "⚠️  WARNING: Using default REFRESH_TOKEN_SECRET! Set REFRESH_TOKEN_SECRET in .env file for production.",
-        );
-      }
     });
   } catch (error) {
     console.error("Error connecting to DB:", error);
