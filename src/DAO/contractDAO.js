@@ -1,6 +1,5 @@
 const Contract = require("../models/contract");
 const mongoose = require("mongoose");
-const department = require("../models/department");
 
 class ContractDAO {
   async createContract(data) {
@@ -70,7 +69,7 @@ class ContractDAO {
         throw new Error("Invalid Staff ID");
       }
 
-      return await Contract.findOne({ staffId })
+      return await Contract.find({ staffId })
         .populate("staffId", "personalInfo.fullName personalInfo.email role")
         .populate("createdBy", "personalInfo.fullName");
     } catch (error) {
