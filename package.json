@@ -8,7 +8,7 @@
     "format": "prettier --write .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon ./src/server.js",
-    "start": "nodemon ./src/server.js",
+    "start": "node ./src/server.js",
     "seed:policies": "node src/seeds/seedPolicies.js",
     "prepare": "husky",
     "lint-staged": "lint-staged"
