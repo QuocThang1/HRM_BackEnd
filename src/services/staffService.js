@@ -54,6 +54,11 @@ const getOneStaffService = async (staffId) => {
 
 const updateStaffService = async (staffId, updateData) => {
   try {
+    const email = updateData.personalInfo.email;
+
+    const existing = await staffDAO.findByEmail(email);
+    if (existing) return { EC: 1, EM: "Email already exists" };
+
     const updatedStaff = await staffDAO.updateStaffByID(staffId, updateData);
     if (!updatedStaff) return { EC: 1, EM: "Staff not found" };
     return { EC: 0, EM: "Staff updated successfully", data: updatedStaff };

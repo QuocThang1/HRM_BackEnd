@@ -148,8 +148,8 @@ const handleRefreshToken = async (req, res) => {
       decoded = jwt.verify(
         refresh_token,
         process.env.REFRESH_TOKEN_SECRET ||
-          process.env.JWT_SECRET ||
-          "default-refresh-secret",
+        process.env.JWT_SECRET ||
+        "default-refresh-secret",
       );
     } catch (error) {
       console.error("Refresh token verification failed:", error);

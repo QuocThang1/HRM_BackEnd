@@ -83,8 +83,8 @@ const handleLoginService = async (email, password) => {
     const refresh_token = jwt.sign(
       { id: staff._id, email: staff.personalInfo.email },
       process.env.REFRESH_TOKEN_SECRET ||
-        process.env.JWT_SECRET ||
-        "default-refresh-secret",
+      process.env.JWT_SECRET ||
+      "default-refresh-secret",
       { expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || "7d" },
     );
 
@@ -119,6 +119,9 @@ const updateProfileService = async (
   gender,
 ) => {
   try {
+    const existingStaff = await staffDAO.findByEmail(email);
+    if (existingStaff && existingStaff._id.toString() !== staffId) return { EC: 1, EM: "Email already exists" };
+
     const updateData = {
       "personalInfo.fullName": name,
       "personalInfo.email": email,
