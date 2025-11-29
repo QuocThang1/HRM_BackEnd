@@ -3,6 +3,8 @@ const {
   submitCV,
   getAllCandidates,
   updateCandidateStatus,
+  autoScreenCV,
+  deleteCV,
 } = require("../controllers/candidateController");
 
 const checkRole = require("../middleware/checkRole");
@@ -16,5 +18,7 @@ routerAPI.put(
   checkRole("admin"),
   updateCandidateStatus,
 );
+routerAPI.post("/:candidateId/auto-screen", checkRole("admin"), autoScreenCV);
+routerAPI.delete("/:candidateId/delete-cv", checkRole("admin"), deleteCV);
 
 module.exports = routerAPI;

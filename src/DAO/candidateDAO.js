@@ -34,6 +34,32 @@ class CandidateDAO {
     }
   }
 
+  async getCandidateById(candidateId) {
+    try {
+      return await Staff.findOne({
+        _id: candidateId,
+        role: "candidate",
+      }).select("-password");
+    } catch (error) {
+      console.error("DAO Error - getCandidateById:", error);
+      throw error;
+    }
+  }
+
+  async checkExistingCV(candidateId) {
+    try {
+      const candidate = await Staff.findOne({
+        _id: candidateId,
+        role: "candidate",
+        "candidateInfo.status": "pending",
+      }).select("-password");
+      return candidate;
+    } catch (error) {
+      console.error("DAO Error - checkExistingCV:", error);
+      throw error;
+    }
+  }
+
   async updateCandidateStatus(candidateId, status) {
     try {
       const updateData = {
@@ -51,6 +77,25 @@ class CandidateDAO {
       }).select("-password");
     } catch (error) {
       console.error("DAO Error - updateCandidateStatus:", error);
+      throw error;
+    }
+  }
+
+  async deleteCV(candidateId) {
+    try {
+      return await Staff.findByIdAndUpdate(
+        candidateId,
+        {
+          "candidateInfo.cvUrl": null,
+          "candidateInfo.status": null,
+        },
+        {
+          new: true,
+          runValidators: true,
+        },
+      ).select("-password");
+    } catch (error) {
+      console.error("DAO Error - deleteCV:", error);
       throw error;
     }
   }

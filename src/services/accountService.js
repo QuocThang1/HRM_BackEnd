@@ -119,6 +119,10 @@ const updateProfileService = async (
   gender,
 ) => {
   try {
+    const existingStaff = await staffDAO.findByEmail(email);
+    if (existingStaff && existingStaff._id.toString() !== staffId)
+      return { EC: 1, EM: "Email already exists" };
+
     const updateData = {
       "personalInfo.fullName": name,
       "personalInfo.email": email,

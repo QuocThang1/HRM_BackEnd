@@ -2,6 +2,8 @@ const {
   submitCVService,
   getAllCandidatesService,
   updateCandidateStatusService,
+  autoScreenCVService,
+  deleteCVService,
 } = require("../services/candidateService");
 
 const submitCV = async (req, res) => {
@@ -39,8 +41,38 @@ const updateCandidateStatus = async (req, res) => {
   }
 };
 
+const autoScreenCV = async (req, res) => {
+  try {
+    const { candidateId } = req.params;
+    const { requiredFields } = req.body;
+
+    if (!requiredFields || Object.keys(requiredFields).length === 0) {
+      return res.json({ EC: 1, EM: "Required fields are missing" });
+    }
+
+    const data = await autoScreenCVService(candidateId, requiredFields);
+    res.json(data);
+  } catch (error) {
+    console.error("Controller Error - autoScreenCV:", error);
+    res.json({ EC: -1, EM: "Internal Server Error" });
+  }
+};
+
+const deleteCV = async (req, res) => {
+  try {
+    const { candidateId } = req.params;
+    const data = await deleteCVService(candidateId);
+    res.json(data);
+  } catch (error) {
+    console.error("Controller Error - deleteCV:", error);
+    res.json({ EC: -1, EM: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   submitCV,
   getAllCandidates,
   updateCandidateStatus,
+  autoScreenCV,
+  deleteCV,
 };
