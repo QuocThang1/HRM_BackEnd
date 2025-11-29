@@ -27,6 +27,7 @@
     "ejs": "3.1.10",
     "express": "4.19.2",
     "express-session": "^1.18.2",
+    "fs": "^0.0.1-security",
     "i18next": "^25.5.2",
     "i18next-fs-backend": "^2.6.0",
     "i18next-http-middleware": "^3.8.0",
@@ -35,9 +36,13 @@
     "mongoose-sequence": "^6.0.1",
     "node-cron": "^4.2.1",
     "nodemailer": "^6.10.1",
+    "openai": "^6.9.1",
     "passport": "^0.7.0",
     "passport-azure-ad": "^4.3.5",
-    "passport-google-oauth20": "^2.0.0"
+    "passport-google-oauth20": "^2.0.0",
+    "path": "^0.12.7",
+    "pdf.js-extract": "^0.2.1",
+    "pdf2pic": "^3.2.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
