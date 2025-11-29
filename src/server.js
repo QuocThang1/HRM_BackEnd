@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const passport = require("./config/passport");
 
 const configViewEngine = require("./config/viewEngine");
@@ -37,22 +38,50 @@ app.use((req, res, next) => {
   next();
 });
 
+console.log("🔍 FRONTEND_URL loaded from ENV:", process.env.FRONTEND_URL);
+const allowedOrigins = [process.env.FRONTEND_URL, "http://localhost:5173"];
+
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Credentials", "true");
+  next();
+});
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        console.log("❌ Blocked by CORS:", origin);
+        return callback(new Error("CORS not allowed: " + origin), false);
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
+    preflightContinue: false,
+    optionsSuccessStatus: 200,
   }),
 );
+
+app.options("*", cors());
 
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "your-secret-key",
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_DB_URL,
+      touchAfter: 24 * 3600, // lazy session update (seconds)
+    }),
     cookie: {
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
       httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
     },
   }),
 );
