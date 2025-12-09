@@ -13,7 +13,7 @@ const checkRole = require("../middleware/checkRole");
 const routerAPI = express.Router();
 
 routerAPI.post("/", checkRole("manager"), createShiftAssignment);
-routerAPI.get("/", checkRole("manager"), getAllShiftAssignments);
+routerAPI.get("/", checkRole("manager", "admin"), getAllShiftAssignments);
 routerAPI.get(
   "/shift-schedule",
   checkRole("staff"),
