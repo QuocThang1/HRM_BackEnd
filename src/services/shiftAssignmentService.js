@@ -14,7 +14,7 @@ const createShiftAssignmentService = async (assignmentData, createdBy) => {
     }
 
     // Kiểm tra staff có thuộc department này không
-    if (staffExists.departmentId?.toString() !== department) {
+    if (staffExists.departmentId?._id.toString() !== department) {
       return { EC: 2, EM: "Staff does not belong to this department" };
     }
 
