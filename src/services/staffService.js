@@ -57,7 +57,9 @@ const updateStaffService = async (staffId, updateData) => {
     const email = updateData.personalInfo.email;
 
     const existing = await staffDAO.findByEmail(email);
-    if (existing) return { EC: 1, EM: "Email already exists" };
+    if (existing && existing._id.toString() !== staffId) {
+      return { EC: 1, EM: "Email already exists" };
+    }
 
     const updatedStaff = await staffDAO.updateStaffByID(staffId, updateData);
     if (!updatedStaff) return { EC: 1, EM: "Staff not found" };
