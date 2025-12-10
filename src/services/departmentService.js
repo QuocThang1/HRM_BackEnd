@@ -1,5 +1,6 @@
 const departmentDAO = require("../DAO/departmentDAO");
 const staffDAO = require("../DAO/staffDAO");
+const shiftAssignmentDAO = require("../DAO/shiftAssignmentDAO");
 
 const createDepartmentService = async (
   departmentName,
@@ -71,6 +72,16 @@ const deleteDepartmentService = async (id) => {
   try {
     const department = await departmentDAO.getDepartmentById(id);
     if (!department) return { EC: 1, EM: "Department not found" };
+
+    const staffList = await staffDAO.getStaffByDepartmentId(id);
+
+    const hasActiveShifts = await shiftAssignmentDAO.checkStaffHasActiveShifts(staffList.map(s => s._id));
+    if (hasActiveShifts) {
+      return {
+        EC: 1,
+        EM: "Cannot delete department. Staff has active shift assignments (scheduled)",
+      };
+    }
 
     await departmentDAO.removeDepartmentFromStaffs(id);
     await departmentDAO.deleteDepartmentReviewsByDepartmentId(id);

@@ -125,7 +125,7 @@ const removeStaffFromDepartmentService = async (staffId) => {
     if (hasActiveShifts) {
       return {
         EC: 1,
-        EM: "Cannot remove staff from department. Staff has active shift assignments (scheduled or completed)",
+        EM: "Cannot remove staff from department. Staff has active shift assignments (scheduled)",
       };
     }
     const updatedStaff = await staffDAO.removeStaffFromDepartment(staffId);
