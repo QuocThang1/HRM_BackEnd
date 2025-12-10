@@ -125,7 +125,7 @@ class ShiftAssignmentDAO {
     try {
       return await ShiftAssignment.findOne({
         staff: staffId,
-        status: { $in: ["scheduled", "completed"] },
+        status: { $in: ["scheduled"] },
       });
     } catch (error) {
       console.error("DAO Error - checkStaffHasActiveShifts:", error);
