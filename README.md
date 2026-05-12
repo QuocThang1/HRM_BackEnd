@@ -29,6 +29,7 @@ This repository contains the backend source code for the Human Resource Manageme
 
 Bash
 cd HRM_BackEnd
+
 3. Install the required dependencies:
 
 Bash
